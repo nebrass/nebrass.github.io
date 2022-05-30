@@ -1,21 +1,233 @@
-<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>java | Nebrass Homepage</title><meta name=keywords content><meta name=description content><meta name=author content><link rel=canonical href=https://blog.nebrass.fr/categories/java/><link crossorigin=anonymous href=/assets/css/stylesheet.min.9aeab43847eb11aca320bfadedfe191ed6516dd768bf1314b534c4992aac901a.css integrity="sha256-muq0OEfrEayjIL+t7f4ZHtZRbddovxMUtTTEmSqskBo=" rel="preload stylesheet" as=style><script src=/js/prism.min.js></script>
-<link rel=stylesheet href=/css/prism.min.css><link rel=icon href=https://blog.nebrass.fr/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://blog.nebrass.fr/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://blog.nebrass.fr/favicon-32x32.png><link rel=apple-touch-icon href=https://blog.nebrass.fr/apple-touch-icon.png><link rel=mask-icon href=https://blog.nebrass.fr/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate type=application/rss+xml href=https://blog.nebrass.fr/categories/java/index.xml><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><style amp-custom>.main,.footer,.nav{max-width:calc(var(--main-width) + var(--gap) * 15)}</style><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-111781986-1","auto"),ga("send","pageview"))</script><meta property="og:title" content="java"><meta property="og:description" content><meta property="og:type" content="website"><meta property="og:url" content="https://blog.nebrass.fr/categories/java/"><meta name=twitter:card content="summary"><meta name=twitter:title content="java"><meta name=twitter:description content></head><body class=list id=top><script>window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://blog.nebrass.fr accesskey=h title="Nebrass Homepage (Alt + H)">Nebrass Homepage</a>
-<span class=logo-switches></span></div><ul id=menu><li><a href=https://blog.nebrass.fr/ title=Posts><span>Posts</span></a></li><li><a href=https://blog.nebrass.fr/search/ title="Search (Alt + /)" accesskey=/><span>Search</span></a></li><li><a href=https://blog.nebrass.fr/categories/ title=Categories><span>Categories</span></a></li></ul></nav></header><main class=main><header class=page-header><h1>java</h1></header><article class="post-entry tag-entry"><figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/freeguy-reactive-quarkus.webp alt></figure><header class=entry-header><h2>Playing with Reactive Quarkus</h2></header><div class=entry-content><p>Here we go again for a new post 😁 After publishing my Quarkus book last September, I got many requests about creating reactive applications with the Quarkus Framework.
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>java | Nebrass Homepage</title>
+<meta name=keywords content>
+<meta name=description content>
+<meta name=author content>
+<link rel=canonical href=https://blog.nebrass.fr/categories/java/>
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.9aeab43847eb11aca320bfadedfe191ed6516dd768bf1314b534c4992aac901a.css integrity="sha256-muq0OEfrEayjIL+t7f4ZHtZRbddovxMUtTTEmSqskBo=" rel="preload stylesheet" as=style>
+<script src=/js/prism.min.js></script>
+<link rel=stylesheet href=/css/prism.min.css>
+<link rel=icon href=https://blog.nebrass.fr/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://blog.nebrass.fr/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://blog.nebrass.fr/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://blog.nebrass.fr/apple-touch-icon.png>
+<link rel=mask-icon href=https://blog.nebrass.fr/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<link rel=alternate type=application/rss+xml href=https://blog.nebrass.fr/categories/java/index.xml>
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<style amp-custom>.main,.footer,.nav{max-width:calc(var(--main-width) + var(--gap) * 15)}</style>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-111781986-1','auto'),ga('send','pageview'))</script><meta property="og:title" content="java">
+<meta property="og:description" content>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://blog.nebrass.fr/categories/java/">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="java">
+<meta name=twitter:description content>
+</head>
+<body class=list id=top>
+<script>window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
+<header class=header>
+<nav class=nav>
+<div class=logo>
+<a href=https://blog.nebrass.fr accesskey=h title="Nebrass Homepage (Alt + H)">Nebrass Homepage</a>
+<span class=logo-switches>
+</span>
+</div>
+<ul id=menu>
+<li>
+<a href=https://blog.nebrass.fr/ title=Posts>
+<span>Posts</span>
+</a>
+</li>
+<li>
+<a href=https://blog.nebrass.fr/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
+<li>
+<a href=https://blog.nebrass.fr/categories/ title=Categories>
+<span>Categories</span>
+</a>
+</li>
+</ul>
+</nav>
+</header>
+<main class=main>
+<header class=page-header>
+<h1>
+java
+</h1>
+</header>
+<article class="post-entry tag-entry">
+<figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/playing-with-reactive-quarkus.webp alt>
+</figure>
+<header class=entry-header>
+<h2>Playing with Reactive Quarkus
+</h2>
+</header>
+<div class=entry-content>
+<p>Here we go again for a new post 😁 After publishing my Quarkus book last September, I got many requests about creating reactive applications with the Quarkus Framework.
 Today, I will show you how to make a Reactive CRUD Application with the Quarkus Framework and backed by a PostgreSQL Database.
 Building our the Reactive Quarkus Application The full source code is available on my Github.
-We will generate our project using the code....</p></div><footer class=entry-footer><span title="2022-05-27 00:00:00 +0000 UTC">May 27, 2022</span>&nbsp;·&nbsp;14 min</footer><a class=entry-link aria-label="post link to Playing with Reactive Quarkus" href=https://blog.nebrass.fr/playing-with-reactive-quarkus/></a></article><article class="post-entry tag-entry"><figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/quarkus-azure-functions.webp alt></figure><header class=entry-header><h2>Playing with Azure Functions and Quarkus</h2></header><div class=entry-content><p>Quarkus is one of the current trends of the Java ecosystem. I’m already in love with it. I’m using it along with Spring Boot, and when I choose, I choose Quarkus. 😁
+We will generate our project using the code....</p>
+</div>
+<footer class=entry-footer><span title="2022-05-27 00:00:00 +0000 UTC">May 27, 2022</span>&nbsp;·&nbsp;14 min</footer>
+<a class=entry-link aria-label="post link to Playing with Reactive Quarkus" href=https://blog.nebrass.fr/playing-with-reactive-quarkus/></a>
+</article>
+<article class="post-entry tag-entry">
+<figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/quarkus-azure-functions.webp alt>
+</figure>
+<header class=entry-header>
+<h2>Playing with Azure Functions and Quarkus
+</h2>
+</header>
+<div class=entry-content>
+<p>Quarkus is one of the current trends of the Java ecosystem. I’m already in love with it. I’m using it along with Spring Boot, and when I choose, I choose Quarkus. 😁
 This week, I was working on a Batch POC using Azure Functions and Azure Automation. So I thought it will be useful to share the exercise with you. 😁
-What I want to do? I will be taking a small use case: I need a batch that will be invoked at some specific time or manually, checking all the available VMs and starting or shutting down all those that we choose....</p></div><footer class=entry-footer><span title="2021-02-23 00:00:00 +0000 UTC">February 23, 2021</span>&nbsp;·&nbsp;15 min</footer><a class=entry-link aria-label="post link to Playing with Azure Functions and Quarkus" href=https://blog.nebrass.fr/playing-with-azure-functions-and-quarkus/></a></article><article class="post-entry tag-entry"><figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/quarkus-book-cover.webp alt></figure><header class=entry-header><h2>"Playing with Java Microservices with Quarkus and Kubernetes" is available in Early Access</h2></header><div class=entry-content><p>Today is the big day 🥳🥳 My third book “Playing with Java Microservices with Quarkus and Kubernetes” is available in Early Access 🎉🎊🎈✨ Book cover
-I started working on the book starting from June 😁 I spent nearly 5 months presenting the most interesting and powerful features of the Quarkus Framework. When I started the Proof-of-concept, I didn’t have the idea of writing a book on Quarkus, I was just discovering....</p></div><footer class=entry-footer><span title="2020-10-23 00:00:00 +0000 UTC">October 23, 2020</span>&nbsp;·&nbsp;3 min</footer><a class=entry-link aria-label='post link to "Playing with Java Microservices with Quarkus and Kubernetes" is available in Early Access' href=https://blog.nebrass.fr/playing-with-java-microservices-with-quarkus-and-kubernetes-is-available-in-early-access/></a></article><article class="post-entry tag-entry"><figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/breaking-news-4-chapters.webp alt></figure><header class=entry-header><h2>Just finished the first four chapters..</h2></header><div class=entry-content><p>Today, I will not be sharing a tutorial or a review, I will share with you my new book news ! 🥳 I just finished typing the fourth chapter. These four chapters belong to the first part of the story: the MoNoLITHiC dedicated part 🤪 ..
-What’s new ? In my previous book “Playing with Java Microservices on Kubernetes and OpenShift” there was a Docker-only chapter in the middle of the book....</p></div><footer class=entry-footer><span title="2020-08-10 00:00:00 +0000 UTC">August 10, 2020</span>&nbsp;·&nbsp;2 min</footer><a class=entry-link aria-label="post link to Just finished the first four chapters.." href=https://blog.nebrass.fr/just-finished-the-first-four-chapters../></a></article><article class="post-entry tag-entry"><figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/playing-spring-webflux-cover.webp alt></figure><header class=entry-header><h2>Playing with Reactive Spring Boot</h2></header><div class=entry-content><p>Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃 I was waiting for the landscape to be mature to made a one-shot tutorial 😁
-Today, I will show you how to make a Reactive Spring Boot application, with a Reactive CRUDs using Spring Data Reactive Relational Database Connectivity (R2DBC) with PostgreSQL and for sure the famous Webflux....</p></div><footer class=entry-footer><span title="2020-06-01 00:00:00 +0000 UTC">June 1, 2020</span>&nbsp;·&nbsp;8 min</footer><a class=entry-link aria-label="post link to Playing with Reactive Spring Boot" href=https://blog.nebrass.fr/playing-with-reactive-spring-boot/></a></article><article class="post-entry tag-entry"><figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/playing-springboot-kafka-eventhub.webp alt></figure><header class=entry-header><h2>Playing with Spring Boot and Kafka on Azure Event Hub</h2></header><div class=entry-content><p>In an enterprise level, it’s obvious for applications to be based on messaging for communication. This is done using a middleware between these applications as a Message Bus that enables them to work together.
-One of the most used Messaging solutions is Apache Kafka: Kafka is an open-source stream-processing software platform developed by LinkedIn and donated to the Apache Software Foundation, written in Scala and Java. The project aims to provide a unified, high-throughput, low-latency platform for handling real-time data feeds....</p></div><footer class=entry-footer><span title="2020-03-01 00:00:00 +0000 UTC">March 1, 2020</span>&nbsp;·&nbsp;7 min</footer><a class=entry-link aria-label="post link to Playing with Spring Boot and Kafka on Azure Event Hub" href=https://blog.nebrass.fr/playing-with-spring-boot-and-kafka-on-azure-event-hub/></a></article><article class="post-entry tag-entry"><figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/groupe-ensi.webp alt></figure><header class=entry-header><h2>Workshop Report: ENSI – January 2020</h2></header><div class=entry-content><p>The workshop “Playing with Java Microservices on Kubernetes” was held from 02/01 to 04/01 - 2020, at the National School of Computer Sciences, in Manouba, Tunisia.
+What I want to do? I will be taking a small use case: I need a batch that will be invoked at some specific time or manually, checking all the available VMs and starting or shutting down all those that we choose....</p>
+</div>
+<footer class=entry-footer><span title="2021-02-23 00:00:00 +0000 UTC">February 23, 2021</span>&nbsp;·&nbsp;15 min</footer>
+<a class=entry-link aria-label="post link to Playing with Azure Functions and Quarkus" href=https://blog.nebrass.fr/playing-with-azure-functions-and-quarkus/></a>
+</article>
+<article class="post-entry tag-entry">
+<figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/quarkus-book-cover.webp alt>
+</figure>
+<header class=entry-header>
+<h2>"Playing with Java Microservices with Quarkus and Kubernetes" is available in Early Access
+</h2>
+</header>
+<div class=entry-content>
+<p>Today is the big day 🥳🥳 My third book “Playing with Java Microservices with Quarkus and Kubernetes” is available in Early Access 🎉🎊🎈✨ Book cover
+I started working on the book starting from June 😁 I spent nearly 5 months presenting the most interesting and powerful features of the Quarkus Framework. When I started the Proof-of-concept, I didn’t have the idea of writing a book on Quarkus, I was just discovering....</p>
+</div>
+<footer class=entry-footer><span title="2020-10-23 00:00:00 +0000 UTC">October 23, 2020</span>&nbsp;·&nbsp;3 min</footer>
+<a class=entry-link aria-label='post link to "Playing with Java Microservices with Quarkus and Kubernetes" is available in Early Access' href=https://blog.nebrass.fr/playing-with-java-microservices-with-quarkus-and-kubernetes-is-available-in-early-access/></a>
+</article>
+<article class="post-entry tag-entry">
+<figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/breaking-news-4-chapters.webp alt>
+</figure>
+<header class=entry-header>
+<h2>Just finished the first four chapters..
+</h2>
+</header>
+<div class=entry-content>
+<p>Today, I will not be sharing a tutorial or a review, I will share with you my new book news ! 🥳 I just finished typing the fourth chapter. These four chapters belong to the first part of the story: the MoNoLITHiC dedicated part 🤪 ..
+What’s new ? In my previous book “Playing with Java Microservices on Kubernetes and OpenShift” there was a Docker-only chapter in the middle of the book....</p>
+</div>
+<footer class=entry-footer><span title="2020-08-10 00:00:00 +0000 UTC">August 10, 2020</span>&nbsp;·&nbsp;2 min</footer>
+<a class=entry-link aria-label="post link to Just finished the first four chapters.." href=https://blog.nebrass.fr/just-finished-the-first-four-chapters../></a>
+</article>
+<article class="post-entry tag-entry">
+<figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/playing-spring-webflux-cover.webp alt>
+</figure>
+<header class=entry-header>
+<h2>Playing with Reactive Spring Boot
+</h2>
+</header>
+<div class=entry-content>
+<p>Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃 I was waiting for the landscape to be mature to made a one-shot tutorial 😁
+Today, I will show you how to make a Reactive Spring Boot application, with a Reactive CRUDs using Spring Data Reactive Relational Database Connectivity (R2DBC) with PostgreSQL and for sure the famous Webflux....</p>
+</div>
+<footer class=entry-footer><span title="2020-06-01 00:00:00 +0000 UTC">June 1, 2020</span>&nbsp;·&nbsp;8 min</footer>
+<a class=entry-link aria-label="post link to Playing with Reactive Spring Boot" href=https://blog.nebrass.fr/playing-with-reactive-spring-boot/></a>
+</article>
+<article class="post-entry tag-entry">
+<figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/playing-springboot-kafka-eventhub.webp alt>
+</figure>
+<header class=entry-header>
+<h2>Playing with Spring Boot and Kafka on Azure Event Hub
+</h2>
+</header>
+<div class=entry-content>
+<p>In an enterprise level, it’s obvious for applications to be based on messaging for communication. This is done using a middleware between these applications as a Message Bus that enables them to work together.
+One of the most used Messaging solutions is Apache Kafka: Kafka is an open-source stream-processing software platform developed by LinkedIn and donated to the Apache Software Foundation, written in Scala and Java. The project aims to provide a unified, high-throughput, low-latency platform for handling real-time data feeds....</p>
+</div>
+<footer class=entry-footer><span title="2020-03-01 00:00:00 +0000 UTC">March 1, 2020</span>&nbsp;·&nbsp;7 min</footer>
+<a class=entry-link aria-label="post link to Playing with Spring Boot and Kafka on Azure Event Hub" href=https://blog.nebrass.fr/playing-with-spring-boot-and-kafka-on-azure-event-hub/></a>
+</article>
+<article class="post-entry tag-entry">
+<figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/groupe-ensi.webp alt>
+</figure>
+<header class=entry-header>
+<h2>Workshop Report: ENSI – January 2020
+</h2>
+</header>
+<div class=entry-content>
+<p>The workshop “Playing with Java Microservices on Kubernetes” was held from 02/01 to 04/01 - 2020, at the National School of Computer Sciences, in Manouba, Tunisia.
 Great gift 😍
 The workshop was done on 21 Hours of training about Java, Spring Boot, DDD, Docker, Kubernetes, Cloud Patterns, Azure AKS & Functions…
 Some Github repositories used in the sessions:
-Monolith Example Microservices Examples Speaker Deck The event was sponsored by Microsoft 😍🤩🥳 !...</p></div><footer class=entry-footer><span title="2020-01-04 00:00:00 +0000 UTC">January 4, 2020</span>&nbsp;·&nbsp;1 min</footer><a class=entry-link aria-label="post link to Workshop Report: ENSI – January 2020" href=https://blog.nebrass.fr/workshop-report-ensi-january-2020/></a></article><article class="post-entry tag-entry"><figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/playing-with-java-from-9-to-13.webp alt></figure><header class=entry-header><h2>Playing with Java from 9 to 13</h2></header><div class=entry-content><p>Since the release of Java SE 8, all the developers were under the charm of the Lambdas, Streams and even there those who fell in love with Nashorn for years (yes there are somewhere in this globe 😅).. With the crazy growth of the Enterprise Development context thru Spring Boot/Cloud, Docker, Kubernetes and the unlimited number of JS frameworks, the infinite patterns and styles of architectures, many developers lost the frequency of being up-to-date with the upstream 🤪...</p></div><footer class=entry-footer><span title="2019-12-29 00:00:00 +0000 UTC">December 29, 2019</span>&nbsp;·&nbsp;29 min</footer><a class=entry-link aria-label="post link to Playing with Java from 9 to 13" href=https://blog.nebrass.fr/playing-with-java-from-9-to-13/></a></article><article class="post-entry tag-entry"><figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/playing-with-java-microservices-on-kubernetes-ensi-2020.webp alt></figure><header class=entry-header><h2>Playing with Java Microservices on Kubernetes - ENSI 2020</h2></header><div class=entry-content><p>I will be in the National School of Computing Sciences of Tunisia (ENSI Tunisia), from the 2nd to 4th January 2020, to animate a 20 Hours workshop, about Microservices in Java and how to deploy them as Docker Containers to Kubernetes. The event is organized by Mrs Rim Drira.
+Monolith Example Microservices Examples Speaker Deck The event was sponsored by Microsoft 😍🤩🥳 !...</p>
+</div>
+<footer class=entry-footer><span title="2020-01-04 00:00:00 +0000 UTC">January 4, 2020</span>&nbsp;·&nbsp;1 min</footer>
+<a class=entry-link aria-label="post link to Workshop Report: ENSI – January 2020" href=https://blog.nebrass.fr/workshop-report-ensi-january-2020/></a>
+</article>
+<article class="post-entry tag-entry">
+<figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/playing-with-java-from-9-to-13.webp alt>
+</figure>
+<header class=entry-header>
+<h2>Playing with Java from 9 to 13
+</h2>
+</header>
+<div class=entry-content>
+<p>Since the release of Java SE 8, all the developers were under the charm of the Lambdas, Streams and even there those who fell in love with Nashorn for years (yes there are somewhere in this globe 😅).. With the crazy growth of the Enterprise Development context thru Spring Boot/Cloud, Docker, Kubernetes and the unlimited number of JS frameworks, the infinite patterns and styles of architectures, many developers lost the frequency of being up-to-date with the upstream 🤪...</p>
+</div>
+<footer class=entry-footer><span title="2019-12-29 00:00:00 +0000 UTC">December 29, 2019</span>&nbsp;·&nbsp;29 min</footer>
+<a class=entry-link aria-label="post link to Playing with Java from 9 to 13" href=https://blog.nebrass.fr/playing-with-java-from-9-to-13/></a>
+</article>
+<article class="post-entry tag-entry">
+<figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/playing-with-java-microservices-on-kubernetes-ensi-2020.webp alt>
+</figure>
+<header class=entry-header>
+<h2>Playing with Java Microservices on Kubernetes - ENSI 2020
+</h2>
+</header>
+<div class=entry-content>
+<p>I will be in the National School of Computing Sciences of Tunisia (ENSI Tunisia), from the 2nd to 4th January 2020, to animate a 20 Hours workshop, about Microservices in Java and how to deploy them as Docker Containers to Kubernetes. The event is organized by Mrs Rim Drira.
 The workshop content:
-Part 1: The Monolithics Era Part 2: Coding the monolith Part 3: Microservices Era Part 4: Applying DDD to the code Part 5: Meeting & Implementing the µservices concerns and patterns Part 6: Building the standalone µservices Part 7: Packaging µservices in containers Part 8: Falling in 🥰 with container orchestrator: KUBERNETES 😍 Part 9: Applying the Kubernetes Style Part 10: Meeting Azure ☁️ Part X: What ’s next ?...</p></div><footer class=entry-footer><span title="2019-12-27 00:00:00 +0000 UTC">December 27, 2019</span>&nbsp;·&nbsp;1 min</footer><a class=entry-link aria-label="post link to Playing with Java Microservices on Kubernetes - ENSI 2020" href=https://blog.nebrass.fr/playing-with-java-microservices-on-kubernetes-ensi-2020/></a></article><article class="post-entry tag-entry"><figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/playing-with-cqrs-event-sourcing-spring-boot-axon.webp alt></figure><header class=entry-header><h2>Playing with CQRS and Event Sourcing in Spring Boot and Axon</h2></header><div class=entry-content><p>The Microservices Architecture World, we can meet many concepts and patterns, like the Centralized Configuration, Circuit Breaker, Service Registry and Discovery, etc.. Two of these patterns are the CQRS and the Event Sourcing patterns, coming from the Domain Driven Design planet 🌏 In the most of the use-cases, these two patterns are sold together 😁 in this new tutorial, we will discover what does each one ? why they are usually used together ?...</p></div><footer class=entry-footer><span title="2019-12-20 00:00:00 +0000 UTC">December 20, 2019</span>&nbsp;·&nbsp;22 min</footer><a class=entry-link aria-label="post link to Playing with CQRS and Event Sourcing in Spring Boot and Axon" href=https://blog.nebrass.fr/playing-with-cqrs-and-event-sourcing-in-spring-boot-and-axon/></a></article><footer class=page-footer><nav class=pagination><a class=next href=https://blog.nebrass.fr/categories/java/page/2/>Next »</a></nav></footer></main><footer class=footer><span>&copy; 2022 <a href=https://blog.nebrass.fr>Nebrass Homepage</a></span>
-<span>Powered by
+Part 1: The Monolithics Era Part 2: Coding the monolith Part 3: Microservices Era Part 4: Applying DDD to the code Part 5: Meeting & Implementing the µservices concerns and patterns Part 6: Building the standalone µservices Part 7: Packaging µservices in containers Part 8: Falling in 🥰 with container orchestrator: KUBERNETES 😍 Part 9: Applying the Kubernetes Style Part 10: Meeting Azure ☁️ Part X: What ’s next ?...</p>
+</div>
+<footer class=entry-footer><span title="2019-12-27 00:00:00 +0000 UTC">December 27, 2019</span>&nbsp;·&nbsp;1 min</footer>
+<a class=entry-link aria-label="post link to Playing with Java Microservices on Kubernetes - ENSI 2020" href=https://blog.nebrass.fr/playing-with-java-microservices-on-kubernetes-ensi-2020/></a>
+</article>
+<article class="post-entry tag-entry">
+<figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/playing-with-cqrs-event-sourcing-spring-boot-axon.webp alt>
+</figure>
+<header class=entry-header>
+<h2>Playing with CQRS and Event Sourcing in Spring Boot and Axon
+</h2>
+</header>
+<div class=entry-content>
+<p>The Microservices Architecture World, we can meet many concepts and patterns, like the Centralized Configuration, Circuit Breaker, Service Registry and Discovery, etc.. Two of these patterns are the CQRS and the Event Sourcing patterns, coming from the Domain Driven Design planet 🌏 In the most of the use-cases, these two patterns are sold together 😁 in this new tutorial, we will discover what does each one ? why they are usually used together ?...</p>
+</div>
+<footer class=entry-footer><span title="2019-12-20 00:00:00 +0000 UTC">December 20, 2019</span>&nbsp;·&nbsp;22 min</footer>
+<a class=entry-link aria-label="post link to Playing with CQRS and Event Sourcing in Spring Boot and Axon" href=https://blog.nebrass.fr/playing-with-cqrs-and-event-sourcing-in-spring-boot-and-axon/></a>
+</article>
+<footer class=page-footer>
+<nav class=pagination>
+<a class=next href=https://blog.nebrass.fr/categories/java/page/2/>Next »</a>
+</nav>
+</footer>
+</main>
+<footer class=footer>
+<span>&copy; 2022 <a href=https://blog.nebrass.fr>Nebrass Homepage</a></span>
+<span>
+Powered by
 <a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
-        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg></a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(t){t.preventDefault();var e=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(e)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(e)}']`).scrollIntoView({behavior:"smooth"}),e==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${e}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script></body></html>
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+</body>
+</html>

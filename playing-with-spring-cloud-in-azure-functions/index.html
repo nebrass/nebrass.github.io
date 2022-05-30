@@ -1,11 +1,115 @@
-<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Playing with Spring Cloud in Azure Functions | Nebrass Homepage</title><meta name=keywords content><meta name=description content="In this tutorial, we will be experimenting a new use case of the great Azure Functions service 😁 one of my favorite products in Azure.
-In this tutorial, we will bring the powerful features of the Spring Framework to our Azure Functions Java projects. After this tutorial, creating a new Azure Functions Java based on business logic that you already have in your Spring Boot Application will be a very easy game."><meta name=author content><link rel=canonical href=https://blog.nebrass.fr/playing-with-spring-cloud-in-azure-functions/><link crossorigin=anonymous href=/assets/css/stylesheet.min.9aeab43847eb11aca320bfadedfe191ed6516dd768bf1314b534c4992aac901a.css integrity="sha256-muq0OEfrEayjIL+t7f4ZHtZRbddovxMUtTTEmSqskBo=" rel="preload stylesheet" as=style><script src=/js/prism.min.js></script>
-<link rel=stylesheet href=/css/prism.min.css><link rel=icon href=https://blog.nebrass.fr/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://blog.nebrass.fr/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://blog.nebrass.fr/favicon-32x32.png><link rel=apple-touch-icon href=https://blog.nebrass.fr/apple-touch-icon.png><link rel=mask-icon href=https://blog.nebrass.fr/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><style amp-custom>.main,.footer,.nav{max-width:calc(var(--main-width) + var(--gap) * 15)}</style><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-111781986-1","auto"),ga("send","pageview"))</script><meta property="og:title" content="Playing with Spring Cloud in Azure Functions"><meta property="og:description" content="In this tutorial, we will be experimenting a new use case of the great Azure Functions service 😁 one of my favorite products in Azure.
-In this tutorial, we will bring the powerful features of the Spring Framework to our Azure Functions Java projects. After this tutorial, creating a new Azure Functions Java based on business logic that you already have in your Spring Boot Application will be a very easy game."><meta property="og:type" content="article"><meta property="og:url" content="https://blog.nebrass.fr/playing-with-spring-cloud-in-azure-functions/"><meta property="og:image" content="https://blog.nebrass.fr/images/spring-cloud-functions-azure.webp"><meta property="article:section" content="posts"><meta property="article:published_time" content="2019-11-19T00:00:00+00:00"><meta property="article:modified_time" content="2019-11-19T00:00:00+00:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://blog.nebrass.fr/images/spring-cloud-functions-azure.webp"><meta name=twitter:title content="Playing with Spring Cloud in Azure Functions"><meta name=twitter:description content="In this tutorial, we will be experimenting a new use case of the great Azure Functions service 😁 one of my favorite products in Azure.
-In this tutorial, we will bring the powerful features of the Spring Framework to our Azure Functions Java projects. After this tutorial, creating a new Azure Functions Java based on business logic that you already have in your Spring Boot Application will be a very easy game."><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"https://blog.nebrass.fr/posts/"},{"@type":"ListItem","position":3,"name":"Playing with Spring Cloud in Azure Functions","item":"https://blog.nebrass.fr/playing-with-spring-cloud-in-azure-functions/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Playing with Spring Cloud in Azure Functions","name":"Playing with Spring Cloud in Azure Functions","description":"In this tutorial, we will be experimenting a new use case of the great Azure Functions service 😁 one of my favorite products in Azure.\nIn this tutorial, we will bring the powerful features of the Spring Framework to our Azure Functions Java projects. After this tutorial, creating a new Azure Functions Java based on business logic that you already have in your Spring Boot Application will be a very easy game.","keywords":[],"articleBody":"In this tutorial, we will be experimenting a new use case of the great Azure Functions service 😁 one of my favorite products in Azure.\nIn this tutorial, we will bring the powerful features of the Spring Framework to our Azure Functions Java projects. After this tutorial, creating a new Azure Functions Java based on business logic that you already have in your Spring Boot Application will be a very easy game.\nBefore digging into the code, we need to create a new Functions Application in our Azure subscription.\nCreating the Azure Function App The first step is to create the new Functions Application on the Azure Portal: https://portal.azure.com\nNext, go to the Function App and when you click on Add you will get this window:\nCreate new Azure Function\n Fill this form with this details:\n App name: spring-azure-function Resource Group: spring-azure-function-rg OS: Windows Hosting Plan: Consumption plan Location: France Central Runtime Stack: Obviously Java 😁 Storage: We will create a new one Application Insights: Just click on Application insights and Enable the Collect application monitoring data using Application Insights. Then Apply and next click on Create 🤓  PREPARING the Functions Application POM.XML We will start by generating a new Spring Boot application using the Spring Initializr:\nGenerate a blank new Spring Boot application using Spring Initializr\n Next; in the generated project, in the pom.xml replace the properties section with these values:\n1 2 3 4 5 6 7 8 9 10 11 12 13   UTF-8 1.8 1.8 1.3.4 1.3.4 spring-azure-function francecentral ${project.build.directory}/azure-functions/${functionAppName} spring-azure-function-rg com.targa.labs.dev.springfunctionsazure.SpringFunctionsAzureApplication 1.0.23.RELEASE    In this properties, we have:\n functionAppName: the name of the Functions Application that we already created in our Azure Subscription functionAppRegion: the location defined for the Functions Application that we already created in our Azure Subscription start-class: the full path of the main class of the generated Spring Boot application  Next, in the dependencies section, we need to replace the listed ones by these values:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24    org.springframework.cloud spring-cloud-starter-function-web provided   org.springframework.cloud spring-cloud-function-adapter-azure   org.projectlombok lombok 1.18.10 provided    org.springframework.boot spring-boot-starter-test test     In this code we added:\n Spring Cloud Starter Function Web: brings in the necessary dependencies to run the functions locally. Spring Cloud Function Adapter Azure: bootstraps a Spring Cloud Function context and channels function calls from the Azure framework into the user functions, using Spring Boot configuration where necessary. Lombok: Java library that will help us avoid writing the getters, setters, toString, constructors.. Spring Boot Starter Test: contains the majority of dependencies and configurations required for the tests.  Add to that, we need to add this dependencyManagement section:\n1 2 3 4 5 6 7 8 9 10 11     org.springframework.cloud spring-cloud-function-dependencies 2.0.1.RELEASE pom import      This dependencyManagement section will make our project inherit dependencies information from the Spring Cloud Function Dependencies parent pom.\nNow, we will prepare the build section of our pom.xml. In this section we will need to add and configure many plugins:\n Azure Functions Maven Plugin Maven Resources Plugin Maven Dependency Plugin Maven Clean Plugin Spring Boot Maven Plugin  We will define the plugins that we will have in the pluginManagement section:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24     com.microsoft.azure azure-functions-maven-plugin ${azure.functions.maven.plugin.version}   org.apache.maven.plugins maven-resources-plugin 3.1.0   org.apache.maven.plugins maven-dependency-plugin 3.1.1   org.apache.maven.plugins maven-clean-plugin 3.1.0      Yes 😆 I didn’t mentioned the plugin spring-boot-maven-plugin in the pluginManagement section for a very simple reason: our project is a Spring Boot Application and it will inherit the details of the spring-boot-maven-plugin from the Spring Boot Parent Pom 🤓\nNow we will configure the build plugins one by one. Let’s start by azure-functions-maven-plugin:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36   com.microsoft.azure azure-functions-maven-plugin  ${functionResourceGroup} ${functionAppName} ${functionAppRegion}    WEBSITE_RUN_FROM_PACKAGE 1   FUNCTIONS_WORKER_RUNTIME java   MAIN_CLASS com.targa.labs.dev.demo.SpringFunctionsAzureApplication   FUNCTIONS_EXTENSION_VERSION ~2      package-functions  package       We passed the Azure Functions properties that we defined in a previous step. We also specified some Settings for our Azure Functions Application:\n WEBSITE_RUN_FROM_PACKAGE: 1 👉 True to run Azure Function from package file FUNCTIONS_WORKER_RUNTIME: Java 🤔 Obviously MAIN_CLASS: the full path name of the Main class of our Spring Boot Application FUNCTIONS_EXTENSION_VERSION: ~2 👉 the Azure Functions Extension Version, we will be using the latest stable version but you can use the ~3 to try to the preview of the incoming 3.x  Now, we will configure the maven-resources-plugin:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27   maven-resources-plugin   copy-resources package  copy-resources     ${project.basedir}/src/main/azure   **     ${project.build.directory}/azure-functions/${functionAppName}  true       The Maven Resources Plugin will copy all the resources available under the folder src/main/azure into the folder target/azure-functions/spring-azure-function.\nGood, but we don’t have this folder yet, so it’s a good opportunity to create it. Inside this folder, we need to create a host.json file that contains:\n1 2 3 4 5 6 7  { \"version\": \"2.0\", \"extensionBundle\": { \"id\": \"Microsoft.Azure.Functions.ExtensionBundle\", \"version\": \"[1.*, 2.0.0)\" } }   and we need to create local.setting.json file that contains:\n1 2 3 4 5 6 7  { \"IsEncrypted\": false, \"Values\": { \"AzureWebJobsStorage\": \"\", \"FUNCTIONS_WORKER_RUNTIME\": \"java\" } }   Great ! Now let’s define the configuration maven-dependency-plugin:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20   org.apache.maven.plugins maven-dependency-plugin   copy-dependencies prepare-package  copy-dependencies   ${stagingDirectory}/lib false false true runtime       The Maven Dependency Plugin will copy all the dependencies for running the Azure Function Application into to the folder target/azure-functions/spring-azure-function/lib.\nNow we need to configure the Maven Clean Plugin to remove the obj folder generated by the Azure Functions DotNet SDK:\n1 2 3 4 5 6 7 8 9 10 11   maven-clean-plugin 3.1.0    obj       Finally, it’s the turn of the Spring Boot Maven Plugin:\n1 2 3 4 5 6 7 8 9 10 11   org.springframework.boot spring-boot-maven-plugin   org.springframework.boot.experimental spring-boot-thin-layout ${wrapper.version}      Here as you see, we added a dependency within the Spring Boot Maven Plugin which is the Spring Boot Thin Layout which helps to dry run (download and cache the dependencies) the Spring Boot built JAR 🥳\nCODING THE FUNCTIONS APPLICATION Let’s create a sample Function that gets a User object with Name attribute and makes as output a Greeting object with “Hello Name” message attribute.\nThe User class:\n1 2 3 4 5 6 7 8  import lombok.AllArgsConstructor; import lombok.Data; @Data @AllArgsConstructor public class User { private String name; }   The Greeting class:\n1 2 3 4 5 6 7 8  import lombok.AllArgsConstructor; import lombok.Data; @Data @AllArgsConstructor public class Greeting { private String message; }   Now, we can create our sample Function class:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19  public class GreetingHandler extends AzureSpringBootRequestHandlerUser, Greeting { @FunctionName(\"greet\") public Greeting execute( @HttpTrigger(name = \"request\", methods = {HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessageOptionalUser request, ExecutionContext context) { context.getLogger().info( String.format(\"Request for : [%s]\", request.getBody().map(User::getName)) ); return handleRequest(request.getBody().get(), context); } }   Our GreetingHandler class inherits from AzureSpringBootRequestHandler. The AzureSpringBootRequestHandler class has a main method called handleRequest to which we will use to delegate the actual function call that we received in execute() method to the Spring Context, which will forward our call to the suitable configured Spring Bean.\nCool, but where our function call will be forwarded ?\nWe want that our request get computed in a Spring Service component which looks like this:\n1 2 3 4 5 6 7  @Service public class GreetingService { public Greeting sayHello(User name) { return new Greeting(\"Hello \" + name); } }   Now, we need to make the glue that links our Function Handler to the Spring Service 🤔\nIt’s quite easy ! to do that, we just need to define a Bean of type Function:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15  @SpringBootApplication public class SpringFunctionsAzureApplication { @Autowired private GreetingService greetingService; @Bean public FunctionUser, Greeting hello() { return user - greetingService.sayHello(user); } public static void main(String[] args) throws Exception { SpringApplication.run(SpringFunctionsAzureApplication.class, args); } }   Now, our function will forward the call to the sayHello() method of the GreetingService that we injected 🥳\nLet’s build and run our Spring Booted Azure Function 🤪\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43  $ mvn clean package azure-functions:run ... [INFO] --- azure-functions-maven-plugin:1.3.4:run (default-cli) @ spring-functions-azure --- .. [INFO] Azure Functions Core Tools found. %%%%%% %%%%%% @ %%%%%% @ @@ %%%%%% @@ @@@ %%%%%%%%%%% @@@ @@ %%%%%%%%%% @@ @@ %%%% @@ @@ %%% @@ @@ %% @@ %% % Azure Functions Core Tools (2.7.1846 Commit hash: 458c671341fda1c52bd46e1aa8943cb26e467830) Function Runtime Version: 2.0.12858.0 .. [19/11/2019 20:33:36] Generating 1 job function(s) [19/11/2019 20:33:36] Found the following functions: [19/11/2019 20:33:36] Host.Functions.greet [19/11/2019 20:33:36] [19/11/2019 20:33:36] Initializing function HTTP routes [19/11/2019 20:33:36] Mapped function route 'api/greet' [POST] to 'greet' [19/11/2019 20:33:36] [19/11/2019 20:33:36] Host initialized (213ms) [19/11/2019 20:33:36] Host started (218ms) [19/11/2019 20:33:36] Job host started [19/11/2019 20:33:36] Listening for transport dt_socket at address: 5005 Http Functions: greet: [POST] http://localhost:7071/api/greet Hosting environment: Production .. Now listening on: http://0.0.0.0:7071 Application started. Press Ctrl+C to shut down. [19/11/2019 20:33:43] Host lock lease acquired by instance ID '00000000000000000000000014D8753A'.   To consume our Function, just POST a User Payload to the shown URL:\n1  $ curl http://localhost:7071/api/greet -d \"{\\\"name\\\":\\\"Nebrass\\\"}\"   The response will look like:\n1 2 3  { \"message\": \"Hello Nebrass\" }   Cool ! Our HTTP Request is now propagated from Azure Functions Host to the Spring Boot Context 🥳\nHTTP Request propagation from Azure Functions to Spring Context\n We can now go further to do more tasks. We can for example make some advanced operations like inserting data to CosmosDB from the Spring Service and based on the Azure Functions Connection Strings 😁\nAccessing Cosmos DB from Spring Service Now, just add this Spring Data CosmosDB dependency to our pom.xml:\n1 2 3 4 5   com.microsoft.azure spring-data-cosmosdb 2.2.1.M1    Now, we need to create the CosmosDbConfiguration class:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21  @Configuration @EnableCosmosRepositories(basePackageClasses = StudentRepository.class) @Slf4j public class CosmosDBConfiguration extends AbstractCosmosConfiguration { @Value(\"${CosmosDbConnection}\") private String key; @Value(\"${azure.cosmosdb.database}\") private String dbName; @Bean public CosmosDBConfig getConfig() { CosmosDBConfig cosmosdbConfig = CosmosDBConfig.builder(key, dbName).build(); log.error(\"key is {}\", key); log.error(\"dbName is {}\", dbName); return cosmosdbConfig; } }   The @Value(\"${CosmosDbConnection}\") will grab the value from the System Environment Variables. This value will be injected in the application environment from the Azure Functions Runtime based on our configuration in the Azure Portal or from the local.settings.json file when working locally.\nThe @Value(\"${azure.cosmosdb.database}\") will grab this value from the application.properties - so let’s add it, it will be our CosmosDB Database Name, which I called university:\n1  azure.cosmosdb.database=university   The @EnableCosmosRepositories(basePackageClasses = StudentRepository.class) annotation will inject the CosmosDbConfiguration that we already created in the StudentRepository class that we need to create now 😁\n1 2 3 4  @Repository public interface StudentRepository extends CosmosRepositoryStudent, String { ListStudent findByName(String name); }   It’s a very classic Spring Data Repository interface 😆nothing special ! and this is the beauty of Spring Boot !\nNow we can inject our StudentRepository in any Spring Service class and enjoy its powerful features:\n1 2 3 4 5 6 7 8 9 10 11 12 13  @Service @Slf4j public class StudentsService { @Autowired private StudentsRepository studentsRepository; public void countUsers() { ListUser studentsList = new ArrayList(); this.studentsRepository.findAll().forEach(studentsList::add); log.info(\"We have {} records in the Students DB\", studentsList.size()); } }   So simple !! In this way, you can enjoy all the features and the facilities of the Spring Boot in the Azure Functions Java projects !\nHave fun ! 🥳\n","wordCount":"2099","inLanguage":"en","image":"https://blog.nebrass.fr/images/spring-cloud-functions-azure.webp","datePublished":"2019-11-19T00:00:00Z","dateModified":"2019-11-19T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.nebrass.fr/playing-with-spring-cloud-in-azure-functions/"},"publisher":{"@type":"Organization","name":"Nebrass Homepage","logo":{"@type":"ImageObject","url":"https://blog.nebrass.fr/favicon.ico"}}}</script></head><body id=top><script>window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://blog.nebrass.fr accesskey=h title="Nebrass Homepage (Alt + H)">Nebrass Homepage</a>
-<span class=logo-switches></span></div><ul id=menu><li><a href=https://blog.nebrass.fr/ title=Posts><span>Posts</span></a></li><li><a href=https://blog.nebrass.fr/search/ title="Search (Alt + /)" accesskey=/><span>Search</span></a></li><li><a href=https://blog.nebrass.fr/categories/ title=Categories><span>Categories</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class=post-title>Playing with Spring Cloud in Azure Functions</h1><div class=post-meta><span title="2019-11-19 00:00:00 +0000 UTC">November 19, 2019</span>&nbsp;·&nbsp;10 min</div></header><figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/spring-cloud-functions-azure.webp alt></figure><div class=post-content><p>In this tutorial, we will be experimenting a new use case of the great <strong>Azure Functions</strong> service 😁 one of my favorite products in <strong>Azure</strong>.</p><p>In this tutorial, we will bring the powerful features of the <strong>Spring Framework</strong> to our <strong>Azure Functions Java</strong> projects. After this tutorial, creating a new <strong>Azure Functions Java</strong> based on business logic that you already have in your <strong>Spring Boot Application</strong> will be a very easy game.</p><p>Before digging into the code, we need to create a new <strong>Functions Application</strong> in our <strong>Azure</strong> subscription.</p><h2 id=creating-the-azure-function-app>Creating the Azure Function App<a hidden class=anchor aria-hidden=true href=#creating-the-azure-function-app>#</a></h2><p>The first step is to create the new <strong>Functions Application</strong> on the Azure Portal: <a href=https://portal.azure.com>https://portal.azure.com</a></p><p>Next, go to the <em><strong>Function App</strong></em> and when you click on <strong><em>Add</em></strong> you will get this window:</p><div align=center><p><img loading=lazy src=../images/azure-create-function-step1.webp alt="azure create function step1" title="azure create function step1">
-Create new Azure Function</p></div><p>Fill this form with this details:</p><ul><li><strong>App name:</strong> spring-azure-function</li><li><strong>Resource Group:</strong> spring-azure-function-rg</li><li><strong>OS:</strong> Windows</li><li><strong>Hosting Plan:</strong> Consumption plan</li><li><strong>Location:</strong> France Central</li><li><strong>Runtime Stack:</strong> Obviously Java 😁</li><li><strong>Storage:</strong> We will create a new one</li><li><strong>Application Insights:</strong> Just click on <strong>Application insights</strong> and <em>Enable</em> the <em>Collect application monitoring data using Application Insights.</em> Then <strong>Apply</strong> and next click on <strong>Create 🤓</strong></li></ul><h2 id=preparing-the-functions-application-pomxml>PREPARING the Functions Application POM.XML<a hidden class=anchor aria-hidden=true href=#preparing-the-functions-application-pomxml>#</a></h2><p>We will start by generating a new <em>Spring Boot</em> application using the <a href=https://start.spring.io/>Spring Initializr</a>:</p><div align=center><p><img loading=lazy src=../images/generate-spring-boot-initializr.webp alt="Generate a blank new Spring Boot application using Spring Initializr" title="Generate a blank new Spring Boot application using Spring Initializr">
-Generate a blank new Spring Boot application using Spring Initializr</p></div><p>Next; in the generated project, in the <code>pom.xml</code> replace the <code>properties</code> section with these values:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>Playing with Spring Cloud in Azure Functions | Nebrass Homepage</title>
+<meta name=keywords content>
+<meta name=description content="In this tutorial, we will be experimenting a new use case of the great Azure Functions service 😁 one of my favorite products in Azure.
+In this tutorial, we will bring the powerful features of the Spring Framework to our Azure Functions Java projects. After this tutorial, creating a new Azure Functions Java based on business logic that you already have in your Spring Boot Application will be a very easy game.">
+<meta name=author content>
+<link rel=canonical href=https://blog.nebrass.fr/playing-with-spring-cloud-in-azure-functions/>
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.9aeab43847eb11aca320bfadedfe191ed6516dd768bf1314b534c4992aac901a.css integrity="sha256-muq0OEfrEayjIL+t7f4ZHtZRbddovxMUtTTEmSqskBo=" rel="preload stylesheet" as=style>
+<script src=/js/prism.min.js></script>
+<link rel=stylesheet href=/css/prism.min.css>
+<link rel=icon href=https://blog.nebrass.fr/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://blog.nebrass.fr/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://blog.nebrass.fr/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://blog.nebrass.fr/apple-touch-icon.png>
+<link rel=mask-icon href=https://blog.nebrass.fr/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<style amp-custom>.main,.footer,.nav{max-width:calc(var(--main-width) + var(--gap) * 15)}</style>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-111781986-1','auto'),ga('send','pageview'))</script><meta property="og:title" content="Playing with Spring Cloud in Azure Functions">
+<meta property="og:description" content="In this tutorial, we will be experimenting a new use case of the great Azure Functions service 😁 one of my favorite products in Azure.
+In this tutorial, we will bring the powerful features of the Spring Framework to our Azure Functions Java projects. After this tutorial, creating a new Azure Functions Java based on business logic that you already have in your Spring Boot Application will be a very easy game.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.nebrass.fr/playing-with-spring-cloud-in-azure-functions/">
+<meta property="og:image" content="https://blog.nebrass.fr/images/spring-cloud-functions-azure.webp"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2019-11-19T00:00:00+00:00">
+<meta property="article:modified_time" content="2019-11-19T00:00:00+00:00">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://blog.nebrass.fr/images/spring-cloud-functions-azure.webp">
+<meta name=twitter:title content="Playing with Spring Cloud in Azure Functions">
+<meta name=twitter:description content="In this tutorial, we will be experimenting a new use case of the great Azure Functions service 😁 one of my favorite products in Azure.
+In this tutorial, we will bring the powerful features of the Spring Framework to our Azure Functions Java projects. After this tutorial, creating a new Azure Functions Java based on business logic that you already have in your Spring Boot Application will be a very easy game.">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"https://blog.nebrass.fr/posts/"},{"@type":"ListItem","position":3,"name":"Playing with Spring Cloud in Azure Functions","item":"https://blog.nebrass.fr/playing-with-spring-cloud-in-azure-functions/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Playing with Spring Cloud in Azure Functions","name":"Playing with Spring Cloud in Azure Functions","description":"In this tutorial, we will be experimenting a new use case of the great Azure Functions service 😁 one of my favorite products in Azure.\nIn this tutorial, we will bring the powerful features of the Spring Framework to our Azure Functions Java projects. After this tutorial, creating a new Azure Functions Java based on business logic that you already have in your Spring Boot Application will be a very easy game.","keywords":[],"articleBody":"In this tutorial, we will be experimenting a new use case of the great Azure Functions service 😁 one of my favorite products in Azure.\nIn this tutorial, we will bring the powerful features of the Spring Framework to our Azure Functions Java projects. After this tutorial, creating a new Azure Functions Java based on business logic that you already have in your Spring Boot Application will be a very easy game.\nBefore digging into the code, we need to create a new Functions Application in our Azure subscription.\nCreating the Azure Function App The first step is to create the new Functions Application on the Azure Portal: https://portal.azure.com\nNext, go to the Function App and when you click on Add you will get this window:\nCreate new Azure Function\n Fill this form with this details:\n App name: spring-azure-function Resource Group: spring-azure-function-rg OS: Windows Hosting Plan: Consumption plan Location: France Central Runtime Stack: Obviously Java 😁 Storage: We will create a new one Application Insights: Just click on Application insights and Enable the Collect application monitoring data using Application Insights. Then Apply and next click on Create 🤓  PREPARING the Functions Application POM.XML We will start by generating a new Spring Boot application using the Spring Initializr:\nGenerate a blank new Spring Boot application using Spring Initializr\n Next; in the generated project, in the pom.xml replace the properties section with these values:\n1 2 3 4 5 6 7 8 9 10 11 12 13   UTF-8 1.8 1.8 1.3.4 1.3.4 spring-azure-function francecentral ${project.build.directory}/azure-functions/${functionAppName} spring-azure-function-rg com.targa.labs.dev.springfunctionsazure.SpringFunctionsAzureApplication 1.0.23.RELEASE    In this properties, we have:\n functionAppName: the name of the Functions Application that we already created in our Azure Subscription functionAppRegion: the location defined for the Functions Application that we already created in our Azure Subscription start-class: the full path of the main class of the generated Spring Boot application  Next, in the dependencies section, we need to replace the listed ones by these values:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24    org.springframework.cloud spring-cloud-starter-function-web provided   org.springframework.cloud spring-cloud-function-adapter-azure   org.projectlombok lombok 1.18.10 provided    org.springframework.boot spring-boot-starter-test test     In this code we added:\n Spring Cloud Starter Function Web: brings in the necessary dependencies to run the functions locally. Spring Cloud Function Adapter Azure: bootstraps a Spring Cloud Function context and channels function calls from the Azure framework into the user functions, using Spring Boot configuration where necessary. Lombok: Java library that will help us avoid writing the getters, setters, toString, constructors.. Spring Boot Starter Test: contains the majority of dependencies and configurations required for the tests.  Add to that, we need to add this dependencyManagement section:\n1 2 3 4 5 6 7 8 9 10 11     org.springframework.cloud spring-cloud-function-dependencies 2.0.1.RELEASE pom import      This dependencyManagement section will make our project inherit dependencies information from the Spring Cloud Function Dependencies parent pom.\nNow, we will prepare the build section of our pom.xml. In this section we will need to add and configure many plugins:\n Azure Functions Maven Plugin Maven Resources Plugin Maven Dependency Plugin Maven Clean Plugin Spring Boot Maven Plugin  We will define the plugins that we will have in the pluginManagement section:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24     com.microsoft.azure azure-functions-maven-plugin ${azure.functions.maven.plugin.version}   org.apache.maven.plugins maven-resources-plugin 3.1.0   org.apache.maven.plugins maven-dependency-plugin 3.1.1   org.apache.maven.plugins maven-clean-plugin 3.1.0      Yes 😆 I didn’t mentioned the plugin spring-boot-maven-plugin in the pluginManagement section for a very simple reason: our project is a Spring Boot Application and it will inherit the details of the spring-boot-maven-plugin from the Spring Boot Parent Pom 🤓\nNow we will configure the build plugins one by one. Let’s start by azure-functions-maven-plugin:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36   com.microsoft.azure azure-functions-maven-plugin  ${functionResourceGroup} ${functionAppName} ${functionAppRegion}    WEBSITE_RUN_FROM_PACKAGE 1   FUNCTIONS_WORKER_RUNTIME java   MAIN_CLASS com.targa.labs.dev.demo.SpringFunctionsAzureApplication   FUNCTIONS_EXTENSION_VERSION ~2      package-functions  package       We passed the Azure Functions properties that we defined in a previous step. We also specified some Settings for our Azure Functions Application:\n WEBSITE_RUN_FROM_PACKAGE: 1 👉 True to run Azure Function from package file FUNCTIONS_WORKER_RUNTIME: Java 🤔 Obviously MAIN_CLASS: the full path name of the Main class of our Spring Boot Application FUNCTIONS_EXTENSION_VERSION: ~2 👉 the Azure Functions Extension Version, we will be using the latest stable version but you can use the ~3 to try to the preview of the incoming 3.x  Now, we will configure the maven-resources-plugin:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27   maven-resources-plugin   copy-resources package  copy-resources     ${project.basedir}/src/main/azure   **     ${project.build.directory}/azure-functions/${functionAppName}  true       The Maven Resources Plugin will copy all the resources available under the folder src/main/azure into the folder target/azure-functions/spring-azure-function.\nGood, but we don’t have this folder yet, so it’s a good opportunity to create it. Inside this folder, we need to create a host.json file that contains:\n1 2 3 4 5 6 7  { \"version\": \"2.0\", \"extensionBundle\": { \"id\": \"Microsoft.Azure.Functions.ExtensionBundle\", \"version\": \"[1.*, 2.0.0)\" } }   and we need to create local.setting.json file that contains:\n1 2 3 4 5 6 7  { \"IsEncrypted\": false, \"Values\": { \"AzureWebJobsStorage\": \"\", \"FUNCTIONS_WORKER_RUNTIME\": \"java\" } }   Great ! Now let’s define the configuration maven-dependency-plugin:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20   org.apache.maven.plugins maven-dependency-plugin   copy-dependencies prepare-package  copy-dependencies   ${stagingDirectory}/lib false false true runtime       The Maven Dependency Plugin will copy all the dependencies for running the Azure Function Application into to the folder target/azure-functions/spring-azure-function/lib.\nNow we need to configure the Maven Clean Plugin to remove the obj folder generated by the Azure Functions DotNet SDK:\n1 2 3 4 5 6 7 8 9 10 11   maven-clean-plugin 3.1.0    obj       Finally, it’s the turn of the Spring Boot Maven Plugin:\n1 2 3 4 5 6 7 8 9 10 11   org.springframework.boot spring-boot-maven-plugin   org.springframework.boot.experimental spring-boot-thin-layout ${wrapper.version}      Here as you see, we added a dependency within the Spring Boot Maven Plugin which is the Spring Boot Thin Layout which helps to dry run (download and cache the dependencies) the Spring Boot built JAR 🥳\nCODING THE FUNCTIONS APPLICATION Let’s create a sample Function that gets a User object with Name attribute and makes as output a Greeting object with “Hello Name” message attribute.\nThe User class:\n1 2 3 4 5 6 7 8  import lombok.AllArgsConstructor; import lombok.Data; @Data @AllArgsConstructor public class User { private String name; }   The Greeting class:\n1 2 3 4 5 6 7 8  import lombok.AllArgsConstructor; import lombok.Data; @Data @AllArgsConstructor public class Greeting { private String message; }   Now, we can create our sample Function class:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19  public class GreetingHandler extends AzureSpringBootRequestHandlerUser, Greeting { @FunctionName(\"greet\") public Greeting execute( @HttpTrigger(name = \"request\", methods = {HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessageOptionalUser request, ExecutionContext context) { context.getLogger().info( String.format(\"Request for : [%s]\", request.getBody().map(User::getName)) ); return handleRequest(request.getBody().get(), context); } }   Our GreetingHandler class inherits from AzureSpringBootRequestHandler. The AzureSpringBootRequestHandler class has a main method called handleRequest to which we will use to delegate the actual function call that we received in execute() method to the Spring Context, which will forward our call to the suitable configured Spring Bean.\nCool, but where our function call will be forwarded ?\nWe want that our request get computed in a Spring Service component which looks like this:\n1 2 3 4 5 6 7  @Service public class GreetingService { public Greeting sayHello(User name) { return new Greeting(\"Hello \" + name); } }   Now, we need to make the glue that links our Function Handler to the Spring Service 🤔\nIt’s quite easy ! to do that, we just need to define a Bean of type Function:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15  @SpringBootApplication public class SpringFunctionsAzureApplication { @Autowired private GreetingService greetingService; @Bean public FunctionUser, Greeting hello() { return user - greetingService.sayHello(user); } public static void main(String[] args) throws Exception { SpringApplication.run(SpringFunctionsAzureApplication.class, args); } }   Now, our function will forward the call to the sayHello() method of the GreetingService that we injected 🥳\nLet’s build and run our Spring Booted Azure Function 🤪\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43  $ mvn clean package azure-functions:run ... [INFO] --- azure-functions-maven-plugin:1.3.4:run (default-cli) @ spring-functions-azure --- .. [INFO] Azure Functions Core Tools found. %%%%%% %%%%%% @ %%%%%% @ @@ %%%%%% @@ @@@ %%%%%%%%%%% @@@ @@ %%%%%%%%%% @@ @@ %%%% @@ @@ %%% @@ @@ %% @@ %% % Azure Functions Core Tools (2.7.1846 Commit hash: 458c671341fda1c52bd46e1aa8943cb26e467830) Function Runtime Version: 2.0.12858.0 .. [19/11/2019 20:33:36] Generating 1 job function(s) [19/11/2019 20:33:36] Found the following functions: [19/11/2019 20:33:36] Host.Functions.greet [19/11/2019 20:33:36] [19/11/2019 20:33:36] Initializing function HTTP routes [19/11/2019 20:33:36] Mapped function route 'api/greet' [POST] to 'greet' [19/11/2019 20:33:36] [19/11/2019 20:33:36] Host initialized (213ms) [19/11/2019 20:33:36] Host started (218ms) [19/11/2019 20:33:36] Job host started [19/11/2019 20:33:36] Listening for transport dt_socket at address: 5005 Http Functions: greet: [POST] http://localhost:7071/api/greet Hosting environment: Production .. Now listening on: http://0.0.0.0:7071 Application started. Press Ctrl+C to shut down. [19/11/2019 20:33:43] Host lock lease acquired by instance ID '00000000000000000000000014D8753A'.   To consume our Function, just POST a User Payload to the shown URL:\n1  $ curl http://localhost:7071/api/greet -d \"{\\\"name\\\":\\\"Nebrass\\\"}\"   The response will look like:\n1 2 3  { \"message\": \"Hello Nebrass\" }   Cool ! Our HTTP Request is now propagated from Azure Functions Host to the Spring Boot Context 🥳\nHTTP Request propagation from Azure Functions to Spring Context\n We can now go further to do more tasks. We can for example make some advanced operations like inserting data to CosmosDB from the Spring Service and based on the Azure Functions Connection Strings 😁\nAccessing Cosmos DB from Spring Service Now, just add this Spring Data CosmosDB dependency to our pom.xml:\n1 2 3 4 5   com.microsoft.azure spring-data-cosmosdb 2.2.1.M1    Now, we need to create the CosmosDbConfiguration class:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21  @Configuration @EnableCosmosRepositories(basePackageClasses = StudentRepository.class) @Slf4j public class CosmosDBConfiguration extends AbstractCosmosConfiguration { @Value(\"${CosmosDbConnection}\") private String key; @Value(\"${azure.cosmosdb.database}\") private String dbName; @Bean public CosmosDBConfig getConfig() { CosmosDBConfig cosmosdbConfig = CosmosDBConfig.builder(key, dbName).build(); log.error(\"key is {}\", key); log.error(\"dbName is {}\", dbName); return cosmosdbConfig; } }   The @Value(\"${CosmosDbConnection}\") will grab the value from the System Environment Variables. This value will be injected in the application environment from the Azure Functions Runtime based on our configuration in the Azure Portal or from the local.settings.json file when working locally.\nThe @Value(\"${azure.cosmosdb.database}\") will grab this value from the application.properties - so let’s add it, it will be our CosmosDB Database Name, which I called university:\n1  azure.cosmosdb.database=university   The @EnableCosmosRepositories(basePackageClasses = StudentRepository.class) annotation will inject the CosmosDbConfiguration that we already created in the StudentRepository class that we need to create now 😁\n1 2 3 4  @Repository public interface StudentRepository extends CosmosRepositoryStudent, String { ListStudent findByName(String name); }   It’s a very classic Spring Data Repository interface 😆nothing special ! and this is the beauty of Spring Boot !\nNow we can inject our StudentRepository in any Spring Service class and enjoy its powerful features:\n1 2 3 4 5 6 7 8 9 10 11 12 13  @Service @Slf4j public class StudentsService { @Autowired private StudentsRepository studentsRepository; public void countUsers() { ListUser studentsList = new ArrayList(); this.studentsRepository.findAll().forEach(studentsList::add); log.info(\"We have {} records in the Students DB\", studentsList.size()); } }   So simple !! In this way, you can enjoy all the features and the facilities of the Spring Boot in the Azure Functions Java projects !\nHave fun ! 🥳\n","wordCount":"2099","inLanguage":"en","image":"https://blog.nebrass.fr/images/spring-cloud-functions-azure.webp","datePublished":"2019-11-19T00:00:00Z","dateModified":"2019-11-19T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.nebrass.fr/playing-with-spring-cloud-in-azure-functions/"},"publisher":{"@type":"Organization","name":"Nebrass Homepage","logo":{"@type":"ImageObject","url":"https://blog.nebrass.fr/favicon.ico"}}}</script>
+</head>
+<body id=top>
+<script>window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
+<header class=header>
+<nav class=nav>
+<div class=logo>
+<a href=https://blog.nebrass.fr accesskey=h title="Nebrass Homepage (Alt + H)">Nebrass Homepage</a>
+<span class=logo-switches>
+</span>
+</div>
+<ul id=menu>
+<li>
+<a href=https://blog.nebrass.fr/ title=Posts>
+<span>Posts</span>
+</a>
+</li>
+<li>
+<a href=https://blog.nebrass.fr/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
+<li>
+<a href=https://blog.nebrass.fr/categories/ title=Categories>
+<span>Categories</span>
+</a>
+</li>
+</ul>
+</nav>
+</header>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<h1 class=post-title>
+Playing with Spring Cloud in Azure Functions
+</h1>
+<div class=post-meta><span title="2019-11-19 00:00:00 +0000 UTC">November 19, 2019</span>&nbsp;·&nbsp;10 min
+</div>
+</header>
+<figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/spring-cloud-functions-azure.webp alt>
+</figure>
+<div class=post-content><p>In this tutorial, we will be experimenting a new use case of the great <strong>Azure Functions</strong> service 😁 one of my favorite products in <strong>Azure</strong>.</p>
+<p>In this tutorial, we will bring the powerful features of the <strong>Spring Framework</strong> to our <strong>Azure Functions Java</strong> projects. After this tutorial, creating a new <strong>Azure Functions Java</strong> based on business logic that you already have in your <strong>Spring Boot Application</strong> will be a very easy game.</p>
+<p>Before digging into the code, we need to create a new <strong>Functions Application</strong> in our <strong>Azure</strong> subscription.</p>
+<h2 id=creating-the-azure-function-app>Creating the Azure Function App<a hidden class=anchor aria-hidden=true href=#creating-the-azure-function-app>#</a></h2>
+<p>The first step is to create the new <strong>Functions Application</strong> on the Azure Portal: <a href=https://portal.azure.com>https://portal.azure.com</a></p>
+<p>Next, go to the <em><strong>Function App</strong></em> and when you click on <strong><em>Add</em></strong> you will get this window:</p>
+<div align=center>
+<p><img loading=lazy src=../images/azure-create-function-step1.webp alt="azure create function step1" title="azure create function step1">
+Create new Azure Function</p>
+</div>
+<p>Fill this form with this details:</p>
+<ul>
+<li><strong>App name:</strong> spring-azure-function</li>
+<li><strong>Resource Group:</strong> spring-azure-function-rg</li>
+<li><strong>OS:</strong> Windows</li>
+<li><strong>Hosting Plan:</strong> Consumption plan</li>
+<li><strong>Location:</strong> France Central</li>
+<li><strong>Runtime Stack:</strong> Obviously Java 😁</li>
+<li><strong>Storage:</strong> We will create a new one</li>
+<li><strong>Application Insights:</strong> Just click on <strong>Application insights</strong> and <em>Enable</em> the <em>Collect application monitoring data using Application Insights.</em> Then <strong>Apply</strong> and next click on <strong>Create 🤓</strong></li>
+</ul>
+<h2 id=preparing-the-functions-application-pomxml>PREPARING the Functions Application POM.XML<a hidden class=anchor aria-hidden=true href=#preparing-the-functions-application-pomxml>#</a></h2>
+<p>We will start by generating a new <em>Spring Boot</em> application using the <a href=https://start.spring.io/>Spring Initializr</a>:</p>
+<div align=center>
+<p><img loading=lazy src=../images/generate-spring-boot-initializr.webp alt="Generate a blank new Spring Boot application using Spring Initializr" title="Generate a blank new Spring Boot application using Spring Initializr">
+Generate a blank new Spring Boot application using Spring Initializr</p>
+</div>
+<p>Next; in the generated project, in the <code>pom.xml</code> replace the <code>properties</code> section with these values:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -18,20 +122,33 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt>11
 </span><span class=lnt>12
 </span><span class=lnt>13
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;properties&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class=nt>&lt;/project.build.sourceEncoding&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;maven.compiler.source&gt;</span>1.8<span class=nt>&lt;/maven.compiler.source&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;maven.compiler.target&gt;</span>1.8<span class=nt>&lt;/maven.compiler.target&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;azure.functions.maven.plugin.version&gt;</span>1.3.4<span class=nt>&lt;/azure.functions.maven.plugin.version&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;azure.functions.java.library.version&gt;</span>1.3.4<span class=nt>&lt;/azure.functions.java.library.version&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;functionAppName&gt;</span>spring-azure-function<span class=nt>&lt;/functionAppName&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;functionAppRegion&gt;</span>francecentral<span class=nt>&lt;/functionAppRegion&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;stagingDirectory&gt;</span>${project.build.directory}/azure-functions/${functionAppName}<span class=nt>&lt;/stagingDirectory&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;functionResourceGroup&gt;</span>spring-azure-function-rg<span class=nt>&lt;/functionResourceGroup&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;start-class&gt;</span>com.targa.labs.dev.springfunctionsazure.SpringFunctionsAzureApplication<span class=nt>&lt;/start-class&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;wrapper.version&gt;</span>1.0.23.RELEASE<span class=nt>&lt;/wrapper.version&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/properties&gt;</span>
-</span></span></code></pre></td></tr></table></div></div><p>In this properties, we have:</p><ul><li><code>functionAppName</code>: the name of the Functions Application that we already created in our Azure Subscription</li><li><code>functionAppRegion</code>: the location defined for the Functions Application that we already created in our Azure Subscription</li><li><code>start-class</code>: the full path of the main class of the generated Spring Boot application</li></ul><p>Next, in the <code>dependencies</code> section, we need to replace the listed ones by these values:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;properties&gt;</span>
+    <span class=nt>&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class=nt>&lt;/project.build.sourceEncoding&gt;</span>
+    <span class=nt>&lt;maven.compiler.source&gt;</span>1.8<span class=nt>&lt;/maven.compiler.source&gt;</span>
+    <span class=nt>&lt;maven.compiler.target&gt;</span>1.8<span class=nt>&lt;/maven.compiler.target&gt;</span>
+    <span class=nt>&lt;azure.functions.maven.plugin.version&gt;</span>1.3.4<span class=nt>&lt;/azure.functions.maven.plugin.version&gt;</span>
+    <span class=nt>&lt;azure.functions.java.library.version&gt;</span>1.3.4<span class=nt>&lt;/azure.functions.java.library.version&gt;</span>
+    <span class=nt>&lt;functionAppName&gt;</span>spring-azure-function<span class=nt>&lt;/functionAppName&gt;</span>
+    <span class=nt>&lt;functionAppRegion&gt;</span>francecentral<span class=nt>&lt;/functionAppRegion&gt;</span>
+    <span class=nt>&lt;stagingDirectory&gt;</span>${project.build.directory}/azure-functions/${functionAppName}<span class=nt>&lt;/stagingDirectory&gt;</span>
+    <span class=nt>&lt;functionResourceGroup&gt;</span>spring-azure-function-rg<span class=nt>&lt;/functionResourceGroup&gt;</span>
+    <span class=nt>&lt;start-class&gt;</span>com.targa.labs.dev.springfunctionsazure.SpringFunctionsAzureApplication<span class=nt>&lt;/start-class&gt;</span>
+    <span class=nt>&lt;wrapper.version&gt;</span>1.0.23.RELEASE<span class=nt>&lt;/wrapper.version&gt;</span>
+<span class=nt>&lt;/properties&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>In this properties, we have:</p>
+<ul>
+<li><code>functionAppName</code>: the name of the Functions Application that we already created in our Azure Subscription</li>
+<li><code>functionAppRegion</code>: the location defined for the Functions Application that we already created in our Azure Subscription</li>
+<li><code>start-class</code>: the full path of the main class of the generated Spring Boot application</li>
+</ul>
+<p>Next, in the <code>dependencies</code> section, we need to replace the listed ones by these values:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -55,31 +172,45 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt>22
 </span><span class=lnt>23
 </span><span class=lnt>24
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;dependencies&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;dependency&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;groupId&gt;</span>org.springframework.cloud<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;artifactId&gt;</span>spring-cloud-starter-function-web<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;scope&gt;</span>provided<span class=nt>&lt;/scope&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;/dependency&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;dependency&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;groupId&gt;</span>org.springframework.cloud<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;artifactId&gt;</span>spring-cloud-function-adapter-azure<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;/dependency&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;dependency&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;groupId&gt;</span>org.projectlombok<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;artifactId&gt;</span>lombok<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;version&gt;</span>1.18.10<span class=nt>&lt;/version&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;scope&gt;</span>provided<span class=nt>&lt;/scope&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;/dependency&gt;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=c>&lt;!-- Test --&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;dependency&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;groupId&gt;</span>org.springframework.boot<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;artifactId&gt;</span>spring-boot-starter-test<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;scope&gt;</span>test<span class=nt>&lt;/scope&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;/dependency&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/dependencies&gt;</span>
-</span></span></code></pre></td></tr></table></div></div><p>In this code we added:</p><ul><li><strong>Spring Cloud Starter Function Web:</strong> brings in the necessary dependencies to run the functions locally.</li><li><strong>Spring Cloud Function Adapter Azure</strong>: bootstraps a Spring Cloud Function context and channels function calls from the Azure framework into the user functions, using Spring Boot configuration where necessary.</li><li><strong>Lombok:</strong> Java library that will help us avoid writing the <em>getters</em>, <em>setters</em>, <em>toString</em>, <em>constructors</em>..</li><li><strong>Spring Boot Starter Test:</strong> contains the majority of dependencies and configurations required for the tests.</li></ul><p>Add to that, we need to add this <code>dependencyManagement</code> section:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;dependencies&gt;</span>
+    <span class=nt>&lt;dependency&gt;</span>
+        <span class=nt>&lt;groupId&gt;</span>org.springframework.cloud<span class=nt>&lt;/groupId&gt;</span>
+        <span class=nt>&lt;artifactId&gt;</span>spring-cloud-starter-function-web<span class=nt>&lt;/artifactId&gt;</span>
+        <span class=nt>&lt;scope&gt;</span>provided<span class=nt>&lt;/scope&gt;</span>
+    <span class=nt>&lt;/dependency&gt;</span>
+    <span class=nt>&lt;dependency&gt;</span>
+        <span class=nt>&lt;groupId&gt;</span>org.springframework.cloud<span class=nt>&lt;/groupId&gt;</span>
+        <span class=nt>&lt;artifactId&gt;</span>spring-cloud-function-adapter-azure<span class=nt>&lt;/artifactId&gt;</span>
+    <span class=nt>&lt;/dependency&gt;</span>
+    <span class=nt>&lt;dependency&gt;</span>
+        <span class=nt>&lt;groupId&gt;</span>org.projectlombok<span class=nt>&lt;/groupId&gt;</span>
+        <span class=nt>&lt;artifactId&gt;</span>lombok<span class=nt>&lt;/artifactId&gt;</span>
+        <span class=nt>&lt;version&gt;</span>1.18.10<span class=nt>&lt;/version&gt;</span>
+        <span class=nt>&lt;scope&gt;</span>provided<span class=nt>&lt;/scope&gt;</span>
+    <span class=nt>&lt;/dependency&gt;</span>
+
+    <span class=c>&lt;!-- Test --&gt;</span>
+    <span class=nt>&lt;dependency&gt;</span>
+        <span class=nt>&lt;groupId&gt;</span>org.springframework.boot<span class=nt>&lt;/groupId&gt;</span>
+        <span class=nt>&lt;artifactId&gt;</span>spring-boot-starter-test<span class=nt>&lt;/artifactId&gt;</span>
+        <span class=nt>&lt;scope&gt;</span>test<span class=nt>&lt;/scope&gt;</span>
+    <span class=nt>&lt;/dependency&gt;</span>
+<span class=nt>&lt;/dependencies&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>In this code we added:</p>
+<ul>
+<li><strong>Spring Cloud Starter Function Web:</strong> brings in the necessary dependencies to run the functions locally.</li>
+<li><strong>Spring Cloud Function Adapter Azure</strong>: bootstraps a Spring Cloud Function context and channels function calls from the Azure framework into the user functions, using Spring Boot configuration where necessary.</li>
+<li><strong>Lombok:</strong> Java library that will help us avoid writing the <em>getters</em>, <em>setters</em>, <em>toString</em>, <em>constructors</em>..</li>
+<li><strong>Spring Boot Starter Test:</strong> contains the majority of dependencies and configurations required for the tests.</li>
+</ul>
+<p>Add to that, we need to add this <code>dependencyManagement</code> section:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -90,18 +221,34 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;dependencyManagement&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;dependencies&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;dependency&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;groupId&gt;</span>org.springframework.cloud<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;artifactId&gt;</span>spring-cloud-function-dependencies<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;version&gt;</span>2.0.1.RELEASE<span class=nt>&lt;/version&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;type&gt;</span>pom<span class=nt>&lt;/type&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;scope&gt;</span>import<span class=nt>&lt;/scope&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;/dependency&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;/dependencies&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/dependencyManagement&gt;</span>
-</span></span></code></pre></td></tr></table></div></div><p>This <code>dependencyManagement</code> section will make our project inherit dependencies information from the <strong>Spring Cloud Function Dependencies</strong> parent pom.</p><p>Now, we will prepare the <code>build</code> section of our <code>pom.xml</code>. In this section we will need to add and configure many plugins:</p><ul><li><strong>Azure Functions Maven Plugin</strong></li><li><strong>Maven Resources Plugin</strong></li><li><strong>Maven Dependency Plugin</strong></li><li><strong>Maven Clean Plugin</strong></li><li><strong>Spring Boot Maven Plugin</strong></li></ul><p>We will define the plugins that we will have in the <code>pluginManagement</code> section:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;dependencyManagement&gt;</span>
+    <span class=nt>&lt;dependencies&gt;</span>
+        <span class=nt>&lt;dependency&gt;</span>
+            <span class=nt>&lt;groupId&gt;</span>org.springframework.cloud<span class=nt>&lt;/groupId&gt;</span>
+            <span class=nt>&lt;artifactId&gt;</span>spring-cloud-function-dependencies<span class=nt>&lt;/artifactId&gt;</span>
+            <span class=nt>&lt;version&gt;</span>2.0.1.RELEASE<span class=nt>&lt;/version&gt;</span>
+            <span class=nt>&lt;type&gt;</span>pom<span class=nt>&lt;/type&gt;</span>
+            <span class=nt>&lt;scope&gt;</span>import<span class=nt>&lt;/scope&gt;</span>
+        <span class=nt>&lt;/dependency&gt;</span>
+    <span class=nt>&lt;/dependencies&gt;</span>
+<span class=nt>&lt;/dependencyManagement&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>This <code>dependencyManagement</code> section will make our project inherit dependencies information from the <strong>Spring Cloud Function Dependencies</strong> parent pom.</p>
+<p>Now, we will prepare the <code>build</code> section of our <code>pom.xml</code>. In this section we will need to add and configure many plugins:</p>
+<ul>
+<li><strong>Azure Functions Maven Plugin</strong></li>
+<li><strong>Maven Resources Plugin</strong></li>
+<li><strong>Maven Dependency Plugin</strong></li>
+<li><strong>Maven Clean Plugin</strong></li>
+<li><strong>Spring Boot Maven Plugin</strong></li>
+</ul>
+<p>We will define the plugins that we will have in the <code>pluginManagement</code> section:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -125,31 +272,39 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt>22
 </span><span class=lnt>23
 </span><span class=lnt>24
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;pluginManagement&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;plugins&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;plugin&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;groupId&gt;</span>com.microsoft.azure<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;artifactId&gt;</span>azure-functions-maven-plugin<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;version&gt;</span>${azure.functions.maven.plugin.version}<span class=nt>&lt;/version&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;/plugin&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;plugin&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;groupId&gt;</span>org.apache.maven.plugins<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;artifactId&gt;</span>maven-resources-plugin<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;version&gt;</span>3.1.0<span class=nt>&lt;/version&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;/plugin&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;plugin&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;groupId&gt;</span>org.apache.maven.plugins<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;artifactId&gt;</span>maven-dependency-plugin<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;version&gt;</span>3.1.1<span class=nt>&lt;/version&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;/plugin&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;plugin&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;groupId&gt;</span>org.apache.maven.plugins<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;artifactId&gt;</span>maven-clean-plugin<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;version&gt;</span>3.1.0<span class=nt>&lt;/version&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;/plugin&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;/plugins&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/pluginManagement&gt;</span>
-</span></span></code></pre></td></tr></table></div></div><p>Yes 😆 I didn&rsquo;t mentioned the plugin <code>spring-boot-maven-plugin</code> in the <code>pluginManagement</code> section for a very simple reason: our project is a <strong>Spring Boot Application</strong> and it will inherit the details of the <code>spring-boot-maven-plugin</code> from the <strong>Spring Boot Parent Pom</strong> 🤓</p><p>Now we will configure the build plugins one by one. Let&rsquo;s start by <code>azure-functions-maven-plugin</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;pluginManagement&gt;</span>
+    <span class=nt>&lt;plugins&gt;</span>
+        <span class=nt>&lt;plugin&gt;</span>
+            <span class=nt>&lt;groupId&gt;</span>com.microsoft.azure<span class=nt>&lt;/groupId&gt;</span>
+            <span class=nt>&lt;artifactId&gt;</span>azure-functions-maven-plugin<span class=nt>&lt;/artifactId&gt;</span>
+            <span class=nt>&lt;version&gt;</span>${azure.functions.maven.plugin.version}<span class=nt>&lt;/version&gt;</span>
+        <span class=nt>&lt;/plugin&gt;</span>
+        <span class=nt>&lt;plugin&gt;</span>
+            <span class=nt>&lt;groupId&gt;</span>org.apache.maven.plugins<span class=nt>&lt;/groupId&gt;</span>
+            <span class=nt>&lt;artifactId&gt;</span>maven-resources-plugin<span class=nt>&lt;/artifactId&gt;</span>
+            <span class=nt>&lt;version&gt;</span>3.1.0<span class=nt>&lt;/version&gt;</span>
+        <span class=nt>&lt;/plugin&gt;</span>
+        <span class=nt>&lt;plugin&gt;</span>
+            <span class=nt>&lt;groupId&gt;</span>org.apache.maven.plugins<span class=nt>&lt;/groupId&gt;</span>
+            <span class=nt>&lt;artifactId&gt;</span>maven-dependency-plugin<span class=nt>&lt;/artifactId&gt;</span>
+            <span class=nt>&lt;version&gt;</span>3.1.1<span class=nt>&lt;/version&gt;</span>
+        <span class=nt>&lt;/plugin&gt;</span>
+        <span class=nt>&lt;plugin&gt;</span>
+            <span class=nt>&lt;groupId&gt;</span>org.apache.maven.plugins<span class=nt>&lt;/groupId&gt;</span>
+            <span class=nt>&lt;artifactId&gt;</span>maven-clean-plugin<span class=nt>&lt;/artifactId&gt;</span>
+            <span class=nt>&lt;version&gt;</span>3.1.0<span class=nt>&lt;/version&gt;</span>
+        <span class=nt>&lt;/plugin&gt;</span>
+    <span class=nt>&lt;/plugins&gt;</span>
+<span class=nt>&lt;/pluginManagement&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Yes 😆 I didn&rsquo;t mentioned the plugin <code>spring-boot-maven-plugin</code> in the <code>pluginManagement</code> section for a very simple reason: our project is a <strong>Spring Boot Application</strong> and it will inherit the details of the <code>spring-boot-maven-plugin</code> from the <strong>Spring Boot Parent Pom</strong> 🤓</p>
+<p>Now we will configure the build plugins one by one. Let&rsquo;s start by <code>azure-functions-maven-plugin</code>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -185,43 +340,57 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt>34
 </span><span class=lnt>35
 </span><span class=lnt>36
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;plugin&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;groupId&gt;</span>com.microsoft.azure<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>azure-functions-maven-plugin<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;configuration&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;resourceGroup&gt;</span>${functionResourceGroup}<span class=nt>&lt;/resourceGroup&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;appName&gt;</span>${functionAppName}<span class=nt>&lt;/appName&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;region&gt;</span>${functionAppRegion}<span class=nt>&lt;/region&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;appSettings&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=c>&lt;!-- Run Azure Function from package file by default --&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;property&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;name&gt;</span>WEBSITE_RUN_FROM_PACKAGE<span class=nt>&lt;/name&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;value&gt;</span>1<span class=nt>&lt;/value&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;/property&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;property&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;name&gt;</span>FUNCTIONS_WORKER_RUNTIME<span class=nt>&lt;/name&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;value&gt;</span>java<span class=nt>&lt;/value&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;/property&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;property&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;name&gt;</span>MAIN_CLASS<span class=nt>&lt;/name&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;value&gt;</span>com.targa.labs.dev.demo.SpringFunctionsAzureApplication<span class=nt>&lt;/value&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;/property&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;property&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;name&gt;</span>FUNCTIONS_EXTENSION_VERSION<span class=nt>&lt;/name&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;value&gt;</span>~2<span class=nt>&lt;/value&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;/property&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;/appSettings&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;/configuration&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;executions&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;execution&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;id&gt;</span>package-functions<span class=nt>&lt;/id&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;goals&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;goal&gt;</span>package<span class=nt>&lt;/goal&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;/goals&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;/execution&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;/executions&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/plugin&gt;</span>
-</span></span></code></pre></td></tr></table></div></div><p>We passed the Azure Functions properties that we defined in a previous step. We also specified some Settings for our Azure Functions Application:</p><ul><li><code>WEBSITE_RUN_FROM_PACKAGE</code>: 1 👉 True to run Azure Function from package file</li><li><code>FUNCTIONS_WORKER_RUNTIME</code>: Java 🤔 Obviously</li><li><code>MAIN_CLASS</code>: the full path name of the Main class of our Spring Boot Application</li><li><code>FUNCTIONS_EXTENSION_VERSION</code>: ~2 👉 the Azure Functions Extension Version, we will be using the latest stable version but you can use the ~3 to try to the preview of the incoming 3.x</li></ul><p>Now, we will configure the  <code>maven-resources-plugin</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;plugin&gt;</span>
+    <span class=nt>&lt;groupId&gt;</span>com.microsoft.azure<span class=nt>&lt;/groupId&gt;</span>
+    <span class=nt>&lt;artifactId&gt;</span>azure-functions-maven-plugin<span class=nt>&lt;/artifactId&gt;</span>
+    <span class=nt>&lt;configuration&gt;</span>
+        <span class=nt>&lt;resourceGroup&gt;</span>${functionResourceGroup}<span class=nt>&lt;/resourceGroup&gt;</span>
+        <span class=nt>&lt;appName&gt;</span>${functionAppName}<span class=nt>&lt;/appName&gt;</span>
+        <span class=nt>&lt;region&gt;</span>${functionAppRegion}<span class=nt>&lt;/region&gt;</span>
+        <span class=nt>&lt;appSettings&gt;</span>
+            <span class=c>&lt;!-- Run Azure Function from package file by default --&gt;</span>
+            <span class=nt>&lt;property&gt;</span>
+                <span class=nt>&lt;name&gt;</span>WEBSITE_RUN_FROM_PACKAGE<span class=nt>&lt;/name&gt;</span>
+                <span class=nt>&lt;value&gt;</span>1<span class=nt>&lt;/value&gt;</span>
+            <span class=nt>&lt;/property&gt;</span>
+            <span class=nt>&lt;property&gt;</span>
+                <span class=nt>&lt;name&gt;</span>FUNCTIONS_WORKER_RUNTIME<span class=nt>&lt;/name&gt;</span>
+                <span class=nt>&lt;value&gt;</span>java<span class=nt>&lt;/value&gt;</span>
+            <span class=nt>&lt;/property&gt;</span>
+            <span class=nt>&lt;property&gt;</span>
+                <span class=nt>&lt;name&gt;</span>MAIN_CLASS<span class=nt>&lt;/name&gt;</span>
+                <span class=nt>&lt;value&gt;</span>com.targa.labs.dev.demo.SpringFunctionsAzureApplication<span class=nt>&lt;/value&gt;</span>
+            <span class=nt>&lt;/property&gt;</span>
+            <span class=nt>&lt;property&gt;</span>
+                <span class=nt>&lt;name&gt;</span>FUNCTIONS_EXTENSION_VERSION<span class=nt>&lt;/name&gt;</span>
+                <span class=nt>&lt;value&gt;</span>~2<span class=nt>&lt;/value&gt;</span>
+            <span class=nt>&lt;/property&gt;</span>
+        <span class=nt>&lt;/appSettings&gt;</span>
+    <span class=nt>&lt;/configuration&gt;</span>
+    <span class=nt>&lt;executions&gt;</span>
+        <span class=nt>&lt;execution&gt;</span>
+            <span class=nt>&lt;id&gt;</span>package-functions<span class=nt>&lt;/id&gt;</span>
+            <span class=nt>&lt;goals&gt;</span>
+                <span class=nt>&lt;goal&gt;</span>package<span class=nt>&lt;/goal&gt;</span>
+            <span class=nt>&lt;/goals&gt;</span>
+        <span class=nt>&lt;/execution&gt;</span>
+    <span class=nt>&lt;/executions&gt;</span>
+<span class=nt>&lt;/plugin&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>We passed the Azure Functions properties that we defined in a previous step. We also specified some Settings for our Azure Functions Application:</p>
+<ul>
+<li><code>WEBSITE_RUN_FROM_PACKAGE</code>: 1 👉 True to run Azure Function from package file</li>
+<li><code>FUNCTIONS_WORKER_RUNTIME</code>: Java 🤔 Obviously</li>
+<li><code>MAIN_CLASS</code>: the full path name of the Main class of our Spring Boot Application</li>
+<li><code>FUNCTIONS_EXTENSION_VERSION</code>: ~2 👉 the Azure Functions Extension Version, we will be using the latest stable version but you can use the ~3 to try to the preview of the incoming 3.x</li>
+</ul>
+<p>Now, we will configure the  <code>maven-resources-plugin</code>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -248,62 +417,84 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt>25
 </span><span class=lnt>26
 </span><span class=lnt>27
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;plugin&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>maven-resources-plugin<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;executions&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;execution&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;id&gt;</span>copy-resources<span class=nt>&lt;/id&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;phase&gt;</span>package<span class=nt>&lt;/phase&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;goals&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;goal&gt;</span>copy-resources<span class=nt>&lt;/goal&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;/goals&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;configuration&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;resources&gt;</span>
-</span></span><span class=line><span class=cl>                    <span class=nt>&lt;resource&gt;</span>
-</span></span><span class=line><span class=cl>                        <span class=nt>&lt;directory&gt;</span>${project.basedir}/src/main/azure
-</span></span><span class=line><span class=cl>                        <span class=nt>&lt;/directory&gt;</span>
-</span></span><span class=line><span class=cl>                        <span class=nt>&lt;includes&gt;</span>
-</span></span><span class=line><span class=cl>                            <span class=nt>&lt;include&gt;</span>**<span class=nt>&lt;/include&gt;</span>
-</span></span><span class=line><span class=cl>                        <span class=nt>&lt;/includes&gt;</span>
-</span></span><span class=line><span class=cl>                    <span class=nt>&lt;/resource&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;/resources&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;outputDirectory&gt;</span>
-</span></span><span class=line><span class=cl>                    ${project.build.directory}/azure-functions/${functionAppName}
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;/outputDirectory&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;overwrite&gt;</span>true<span class=nt>&lt;/overwrite&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;/configuration&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;/execution&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;/executions&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/plugin&gt;</span>
-</span></span></code></pre></td></tr></table></div></div><p>The <strong>Maven Resources Plugin</strong> will copy all the resources available under the folder <code>src/main/azure</code> into the folder <code>target/azure-functions/spring-azure-function</code>.</p><p>Good, but we don&rsquo;t have this folder yet, so it&rsquo;s a good opportunity to create it. Inside this folder, we need to create a <code>host.json</code> file that contains:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;plugin&gt;</span>
+    <span class=nt>&lt;artifactId&gt;</span>maven-resources-plugin<span class=nt>&lt;/artifactId&gt;</span>
+    <span class=nt>&lt;executions&gt;</span>
+        <span class=nt>&lt;execution&gt;</span>
+            <span class=nt>&lt;id&gt;</span>copy-resources<span class=nt>&lt;/id&gt;</span>
+            <span class=nt>&lt;phase&gt;</span>package<span class=nt>&lt;/phase&gt;</span>
+            <span class=nt>&lt;goals&gt;</span>
+                <span class=nt>&lt;goal&gt;</span>copy-resources<span class=nt>&lt;/goal&gt;</span>
+            <span class=nt>&lt;/goals&gt;</span>
+            <span class=nt>&lt;configuration&gt;</span>
+                <span class=nt>&lt;resources&gt;</span>
+                    <span class=nt>&lt;resource&gt;</span>
+                        <span class=nt>&lt;directory&gt;</span>${project.basedir}/src/main/azure
+                        <span class=nt>&lt;/directory&gt;</span>
+                        <span class=nt>&lt;includes&gt;</span>
+                            <span class=nt>&lt;include&gt;</span>**<span class=nt>&lt;/include&gt;</span>
+                        <span class=nt>&lt;/includes&gt;</span>
+                    <span class=nt>&lt;/resource&gt;</span>
+                <span class=nt>&lt;/resources&gt;</span>
+                <span class=nt>&lt;outputDirectory&gt;</span>
+                    ${project.build.directory}/azure-functions/${functionAppName}
+                <span class=nt>&lt;/outputDirectory&gt;</span>
+                <span class=nt>&lt;overwrite&gt;</span>true<span class=nt>&lt;/overwrite&gt;</span>
+            <span class=nt>&lt;/configuration&gt;</span>
+        <span class=nt>&lt;/execution&gt;</span>
+    <span class=nt>&lt;/executions&gt;</span>
+<span class=nt>&lt;/plugin&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The <strong>Maven Resources Plugin</strong> will copy all the resources available under the folder <code>src/main/azure</code> into the folder <code>target/azure-functions/spring-azure-function</code>.</p>
+<p>Good, but we don&rsquo;t have this folder yet, so it&rsquo;s a good opportunity to create it. Inside this folder, we need to create a <code>host.json</code> file that contains:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&#34;version&#34;</span><span class=p>:</span> <span class=s2>&#34;2.0&#34;</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&#34;extensionBundle&#34;</span><span class=p>:</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;Microsoft.Azure.Functions.ExtensionBundle&#34;</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&#34;version&#34;</span><span class=p>:</span> <span class=s2>&#34;[1.*, 2.0.0)&#34;</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>and we need to create <code>local.setting.json</code> file that contains:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=p>{</span>
+    <span class=nt>&#34;version&#34;</span><span class=p>:</span> <span class=s2>&#34;2.0&#34;</span><span class=p>,</span>
+    <span class=nt>&#34;extensionBundle&#34;</span><span class=p>:</span> <span class=p>{</span>
+        <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;Microsoft.Azure.Functions.ExtensionBundle&#34;</span><span class=p>,</span>
+        <span class=nt>&#34;version&#34;</span><span class=p>:</span> <span class=s2>&#34;[1.*, 2.0.0)&#34;</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>and we need to create <code>local.setting.json</code> file that contains:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>  <span class=nt>&#34;IsEncrypted&#34;</span><span class=p>:</span> <span class=kc>false</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>  <span class=nt>&#34;Values&#34;</span><span class=p>:</span> <span class=p>{</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&#34;AzureWebJobsStorage&#34;</span><span class=p>:</span> <span class=s2>&#34;&#34;</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&#34;FUNCTIONS_WORKER_RUNTIME&#34;</span><span class=p>:</span> <span class=s2>&#34;java&#34;</span>
-</span></span><span class=line><span class=cl>  <span class=p>}</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>Great ! Now let&rsquo;s define the configuration <code>maven-dependency-plugin</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=p>{</span>
+  <span class=nt>&#34;IsEncrypted&#34;</span><span class=p>:</span> <span class=kc>false</span><span class=p>,</span>
+  <span class=nt>&#34;Values&#34;</span><span class=p>:</span> <span class=p>{</span>
+    <span class=nt>&#34;AzureWebJobsStorage&#34;</span><span class=p>:</span> <span class=s2>&#34;&#34;</span><span class=p>,</span>
+    <span class=nt>&#34;FUNCTIONS_WORKER_RUNTIME&#34;</span><span class=p>:</span> <span class=s2>&#34;java&#34;</span>
+  <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Great ! Now let&rsquo;s define the configuration <code>maven-dependency-plugin</code>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -323,27 +514,35 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt>18
 </span><span class=lnt>19
 </span><span class=lnt>20
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;plugin&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;groupId&gt;</span>org.apache.maven.plugins<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>maven-dependency-plugin<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;executions&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;execution&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;id&gt;</span>copy-dependencies<span class=nt>&lt;/id&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;phase&gt;</span>prepare-package<span class=nt>&lt;/phase&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;goals&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;goal&gt;</span>copy-dependencies<span class=nt>&lt;/goal&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;/goals&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;configuration&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;outputDirectory&gt;</span>${stagingDirectory}/lib<span class=nt>&lt;/outputDirectory&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;overWriteReleases&gt;</span>false<span class=nt>&lt;/overWriteReleases&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;overWriteSnapshots&gt;</span>false<span class=nt>&lt;/overWriteSnapshots&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;overWriteIfNewer&gt;</span>true<span class=nt>&lt;/overWriteIfNewer&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;includeScope&gt;</span>runtime<span class=nt>&lt;/includeScope&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;/configuration&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;/execution&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;/executions&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/plugin&gt;</span>
-</span></span></code></pre></td></tr></table></div></div><p>The <strong>Maven Dependency Plugin</strong> will copy all the dependencies for running the Azure Function Application into to the folder <code>target/azure-functions/spring-azure-function/lib</code>.</p><p>Now we need to configure the <strong>Maven Clean Plugin</strong> to remove the <code>obj</code> folder generated by the <strong>Azure Functions DotNet SDK</strong>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;plugin&gt;</span>
+    <span class=nt>&lt;groupId&gt;</span>org.apache.maven.plugins<span class=nt>&lt;/groupId&gt;</span>
+    <span class=nt>&lt;artifactId&gt;</span>maven-dependency-plugin<span class=nt>&lt;/artifactId&gt;</span>
+    <span class=nt>&lt;executions&gt;</span>
+        <span class=nt>&lt;execution&gt;</span>
+            <span class=nt>&lt;id&gt;</span>copy-dependencies<span class=nt>&lt;/id&gt;</span>
+            <span class=nt>&lt;phase&gt;</span>prepare-package<span class=nt>&lt;/phase&gt;</span>
+            <span class=nt>&lt;goals&gt;</span>
+                <span class=nt>&lt;goal&gt;</span>copy-dependencies<span class=nt>&lt;/goal&gt;</span>
+            <span class=nt>&lt;/goals&gt;</span>
+            <span class=nt>&lt;configuration&gt;</span>
+                <span class=nt>&lt;outputDirectory&gt;</span>${stagingDirectory}/lib<span class=nt>&lt;/outputDirectory&gt;</span>
+                <span class=nt>&lt;overWriteReleases&gt;</span>false<span class=nt>&lt;/overWriteReleases&gt;</span>
+                <span class=nt>&lt;overWriteSnapshots&gt;</span>false<span class=nt>&lt;/overWriteSnapshots&gt;</span>
+                <span class=nt>&lt;overWriteIfNewer&gt;</span>true<span class=nt>&lt;/overWriteIfNewer&gt;</span>
+                <span class=nt>&lt;includeScope&gt;</span>runtime<span class=nt>&lt;/includeScope&gt;</span>
+            <span class=nt>&lt;/configuration&gt;</span>
+        <span class=nt>&lt;/execution&gt;</span>
+    <span class=nt>&lt;/executions&gt;</span>
+<span class=nt>&lt;/plugin&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The <strong>Maven Dependency Plugin</strong> will copy all the dependencies for running the Azure Function Application into to the folder <code>target/azure-functions/spring-azure-function/lib</code>.</p>
+<p>Now we need to configure the <strong>Maven Clean Plugin</strong> to remove the <code>obj</code> folder generated by the <strong>Azure Functions DotNet SDK</strong>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -354,18 +553,25 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;plugin&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>maven-clean-plugin<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;version&gt;</span>3.1.0<span class=nt>&lt;/version&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;configuration&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;filesets&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;fileset&gt;</span>
-</span></span><span class=line><span class=cl>                <span class=nt>&lt;directory&gt;</span>obj<span class=nt>&lt;/directory&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;/fileset&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;/filesets&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;/configuration&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/plugin&gt;</span>
-</span></span></code></pre></td></tr></table></div></div><p>Finally, it&rsquo;s the turn of the <strong>Spring Boot Maven Plugin</strong>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;plugin&gt;</span>
+    <span class=nt>&lt;artifactId&gt;</span>maven-clean-plugin<span class=nt>&lt;/artifactId&gt;</span>
+    <span class=nt>&lt;version&gt;</span>3.1.0<span class=nt>&lt;/version&gt;</span>
+    <span class=nt>&lt;configuration&gt;</span>
+        <span class=nt>&lt;filesets&gt;</span>
+            <span class=nt>&lt;fileset&gt;</span>
+                <span class=nt>&lt;directory&gt;</span>obj<span class=nt>&lt;/directory&gt;</span>
+            <span class=nt>&lt;/fileset&gt;</span>
+        <span class=nt>&lt;/filesets&gt;</span>
+    <span class=nt>&lt;/configuration&gt;</span>
+<span class=nt>&lt;/plugin&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Finally, it&rsquo;s the turn of the <strong>Spring Boot Maven Plugin</strong>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -376,18 +582,28 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;plugin&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;groupId&gt;</span>org.springframework.boot<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;dependencies&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;dependency&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;groupId&gt;</span>org.springframework.boot.experimental<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;artifactId&gt;</span>spring-boot-thin-layout<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>            <span class=nt>&lt;version&gt;</span>${wrapper.version}<span class=nt>&lt;/version&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;/dependency&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;/dependencies&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/plugin&gt;</span>
-</span></span></code></pre></td></tr></table></div></div><p>Here as you see, we added a dependency within the <strong>Spring Boot Maven Plugin</strong> which is the <strong>Spring Boot Thin Layout</strong> which helps to dry run (download and cache the dependencies) the <strong>Spring Boot built JAR</strong> 🥳</p><h2 id=coding-the-functions-application>CODING THE FUNCTIONS APPLICATION<a hidden class=anchor aria-hidden=true href=#coding-the-functions-application>#</a></h2><p>Let&rsquo;s create a sample Function that gets a <strong>User</strong> object with <em><strong>Name</strong></em> attribute and makes as output a <strong>Greeting</strong> object with <em><strong>&ldquo;Hello Name&rdquo; message attribute</strong></em>.</p><p>The <strong>User</strong> class:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;plugin&gt;</span>
+    <span class=nt>&lt;groupId&gt;</span>org.springframework.boot<span class=nt>&lt;/groupId&gt;</span>
+    <span class=nt>&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class=nt>&lt;/artifactId&gt;</span>
+    <span class=nt>&lt;dependencies&gt;</span>
+        <span class=nt>&lt;dependency&gt;</span>
+            <span class=nt>&lt;groupId&gt;</span>org.springframework.boot.experimental<span class=nt>&lt;/groupId&gt;</span>
+            <span class=nt>&lt;artifactId&gt;</span>spring-boot-thin-layout<span class=nt>&lt;/artifactId&gt;</span>
+            <span class=nt>&lt;version&gt;</span>${wrapper.version}<span class=nt>&lt;/version&gt;</span>
+        <span class=nt>&lt;/dependency&gt;</span>
+    <span class=nt>&lt;/dependencies&gt;</span>
+<span class=nt>&lt;/plugin&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Here as you see, we added a dependency within the <strong>Spring Boot Maven Plugin</strong> which is the <strong>Spring Boot Thin Layout</strong> which helps to dry run (download and cache the dependencies) the <strong>Spring Boot built JAR</strong> 🥳</p>
+<h2 id=coding-the-functions-application>CODING THE FUNCTIONS APPLICATION<a hidden class=anchor aria-hidden=true href=#coding-the-functions-application>#</a></h2>
+<p>Let&rsquo;s create a sample Function that gets a <strong>User</strong> object with <em><strong>Name</strong></em> attribute and makes as output a <strong>Greeting</strong> object with <em><strong>&ldquo;Hello Name&rdquo; message attribute</strong></em>.</p>
+<p>The <strong>User</strong> class:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -395,15 +611,22 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt>6
 </span><span class=lnt>7
 </span><span class=lnt>8
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kn>import</span> <span class=nn>lombok.AllArgsConstructor</span><span class=o>;</span>
-</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>lombok.Data</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=nd>@Data</span>
-</span></span><span class=line><span class=cl><span class=nd>@AllArgsConstructor</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>User</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>name</span><span class=o>;</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>The <strong>Greeting</strong> class:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kn>import</span> <span class=nn>lombok.AllArgsConstructor</span><span class=o>;</span>
+<span class=kn>import</span> <span class=nn>lombok.Data</span><span class=o>;</span>
+
+<span class=nd>@Data</span>
+<span class=nd>@AllArgsConstructor</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>User</span> <span class=o>{</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>name</span><span class=o>;</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The <strong>Greeting</strong> class:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -411,15 +634,22 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt>6
 </span><span class=lnt>7
 </span><span class=lnt>8
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kn>import</span> <span class=nn>lombok.AllArgsConstructor</span><span class=o>;</span>
-</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>lombok.Data</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl><span class=nd>@Data</span>
-</span></span><span class=line><span class=cl><span class=nd>@AllArgsConstructor</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Greeting</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>message</span><span class=o>;</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>Now, we can create our sample <em><strong>Function</strong></em> class:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kn>import</span> <span class=nn>lombok.AllArgsConstructor</span><span class=o>;</span>
+<span class=kn>import</span> <span class=nn>lombok.Data</span><span class=o>;</span>
+
+<span class=nd>@Data</span>
+<span class=nd>@AllArgsConstructor</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>Greeting</span> <span class=o>{</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>message</span><span class=o>;</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Now, we can create our sample <em><strong>Function</strong></em> class:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -438,40 +668,57 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt>17
 </span><span class=lnt>18
 </span><span class=lnt>19
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>GreetingHandler</span> <span class=kd>extends</span>
-</span></span><span class=line><span class=cl>                        <span class=n>AzureSpringBootRequestHandler</span><span class=o>&lt;</span><span class=n>User</span><span class=o>,</span> <span class=n>Greeting</span><span class=o>&gt;</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@FunctionName</span><span class=o>(</span><span class=s>&#34;greet&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Greeting</span> <span class=nf>execute</span><span class=o>(</span>
-</span></span><span class=line><span class=cl>            <span class=nd>@HttpTrigger</span><span class=o>(</span><span class=n>name</span> <span class=o>=</span> <span class=s>&#34;request&#34;</span><span class=o>,</span>
-</span></span><span class=line><span class=cl>                    <span class=n>methods</span> <span class=o>=</span> <span class=o>{</span><span class=n>HttpMethod</span><span class=o>.</span><span class=na>POST</span><span class=o>},</span>
-</span></span><span class=line><span class=cl>                    <span class=n>authLevel</span> <span class=o>=</span> <span class=n>AuthorizationLevel</span><span class=o>.</span><span class=na>ANONYMOUS</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>                    <span class=n>HttpRequestMessage</span><span class=o>&lt;</span><span class=n>Optional</span><span class=o>&lt;</span><span class=n>User</span><span class=o>&gt;&gt;</span> <span class=n>request</span><span class=o>,</span>
-</span></span><span class=line><span class=cl>            <span class=n>ExecutionContext</span> <span class=n>context</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>        <span class=n>context</span><span class=o>.</span><span class=na>getLogger</span><span class=o>().</span><span class=na>info</span><span class=o>(</span>
-</span></span><span class=line><span class=cl>                <span class=n>String</span><span class=o>.</span><span class=na>format</span><span class=o>(</span><span class=s>&#34;Request for : [%s]&#34;</span><span class=o>,</span>
-</span></span><span class=line><span class=cl>                        <span class=n>request</span><span class=o>.</span><span class=na>getBody</span><span class=o>().</span><span class=na>map</span><span class=o>(</span><span class=n>User</span><span class=o>::</span><span class=n>getName</span><span class=o>))</span>
-</span></span><span class=line><span class=cl>        <span class=o>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>handleRequest</span><span class=o>(</span><span class=n>request</span><span class=o>.</span><span class=na>getBody</span><span class=o>().</span><span class=na>get</span><span class=o>(),</span> <span class=n>context</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>Our <code>GreetingHandler</code> class inherits from <code>AzureSpringBootRequestHandler&lt;InputTypeClass, OutputTypeClass></code>. The <code>AzureSpringBootRequestHandler</code> class has a main method called <code>handleRequest</code> to which we will use to delegate the actual function call that we received in <code>execute()</code> method to the <em><strong>Spring Context</strong></em>, which will forward our call to the suitable configured <em><strong>Spring Bean</strong></em>.</p><p>Cool, but where our function call will be forwarded ?</p><p>We want that our request get computed in a Spring Service component which looks like this:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kd>public</span> <span class=kd>class</span> <span class=nc>GreetingHandler</span> <span class=kd>extends</span>
+                        <span class=n>AzureSpringBootRequestHandler</span><span class=o>&lt;</span><span class=n>User</span><span class=o>,</span> <span class=n>Greeting</span><span class=o>&gt;</span> <span class=o>{</span>
+
+    <span class=nd>@FunctionName</span><span class=o>(</span><span class=s>&#34;greet&#34;</span><span class=o>)</span>
+    <span class=kd>public</span> <span class=n>Greeting</span> <span class=nf>execute</span><span class=o>(</span>
+            <span class=nd>@HttpTrigger</span><span class=o>(</span><span class=n>name</span> <span class=o>=</span> <span class=s>&#34;request&#34;</span><span class=o>,</span>
+                    <span class=n>methods</span> <span class=o>=</span> <span class=o>{</span><span class=n>HttpMethod</span><span class=o>.</span><span class=na>POST</span><span class=o>},</span>
+                    <span class=n>authLevel</span> <span class=o>=</span> <span class=n>AuthorizationLevel</span><span class=o>.</span><span class=na>ANONYMOUS</span><span class=o>)</span>
+                    <span class=n>HttpRequestMessage</span><span class=o>&lt;</span><span class=n>Optional</span><span class=o>&lt;</span><span class=n>User</span><span class=o>&gt;&gt;</span> <span class=n>request</span><span class=o>,</span>
+            <span class=n>ExecutionContext</span> <span class=n>context</span><span class=o>)</span> <span class=o>{</span>
+
+        <span class=n>context</span><span class=o>.</span><span class=na>getLogger</span><span class=o>().</span><span class=na>info</span><span class=o>(</span>
+                <span class=n>String</span><span class=o>.</span><span class=na>format</span><span class=o>(</span><span class=s>&#34;Request for : [%s]&#34;</span><span class=o>,</span>
+                        <span class=n>request</span><span class=o>.</span><span class=na>getBody</span><span class=o>().</span><span class=na>map</span><span class=o>(</span><span class=n>User</span><span class=o>::</span><span class=n>getName</span><span class=o>))</span>
+        <span class=o>);</span>
+
+        <span class=k>return</span> <span class=n>handleRequest</span><span class=o>(</span><span class=n>request</span><span class=o>.</span><span class=na>getBody</span><span class=o>().</span><span class=na>get</span><span class=o>(),</span> <span class=n>context</span><span class=o>);</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Our <code>GreetingHandler</code> class inherits from <code>AzureSpringBootRequestHandler&lt;InputTypeClass, OutputTypeClass></code>. The <code>AzureSpringBootRequestHandler</code> class has a main method called <code>handleRequest</code> to which we will use to delegate the actual function call that we received in <code>execute()</code> method to the <em><strong>Spring Context</strong></em>, which will forward our call to the suitable configured <em><strong>Spring Bean</strong></em>.</p>
+<p>Cool, but where our function call will be forwarded ?</p>
+<p>We want that our request get computed in a Spring Service component which looks like this:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Service</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>GreetingService</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Greeting</span> <span class=nf>sayHello</span><span class=o>(</span><span class=n>User</span> <span class=n>name</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>new</span> <span class=n>Greeting</span><span class=o>(</span><span class=s>&#34;Hello &#34;</span> <span class=o>+</span> <span class=n>name</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>Now, we need to make the glue that links our <strong>Function Handler</strong> to the <strong>Spring Service 🤔</strong></p><p>It&rsquo;s quite easy ! to do that, we just need to define a <code>Bean</code> of type <code>Function</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Service</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>GreetingService</span> <span class=o>{</span>
+
+    <span class=kd>public</span> <span class=n>Greeting</span> <span class=nf>sayHello</span><span class=o>(</span><span class=n>User</span> <span class=n>name</span><span class=o>)</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=k>new</span> <span class=n>Greeting</span><span class=o>(</span><span class=s>&#34;Hello &#34;</span> <span class=o>+</span> <span class=n>name</span><span class=o>);</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Now, we need to make the glue that links our <strong>Function Handler</strong> to the <strong>Spring Service 🤔</strong></p>
+<p>It&rsquo;s quite easy ! to do that, we just need to define a <code>Bean</code> of type <code>Function</code>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -486,22 +733,30 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt>13
 </span><span class=lnt>14
 </span><span class=lnt>15
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@SpringBootApplication</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>SpringFunctionsAzureApplication</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Autowired</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>GreetingService</span> <span class=n>greetingService</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Bean</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Function</span><span class=o>&lt;</span><span class=n>User</span><span class=o>,</span> <span class=n>Greeting</span><span class=o>&gt;</span> <span class=nf>hello</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>user</span> <span class=o>-&gt;</span> <span class=n>greetingService</span><span class=o>.</span><span class=na>sayHello</span><span class=o>(</span><span class=n>user</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=kd>throws</span> <span class=n>Exception</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>SpringApplication</span><span class=o>.</span><span class=na>run</span><span class=o>(</span><span class=n>SpringFunctionsAzureApplication</span><span class=o>.</span><span class=na>class</span><span class=o>,</span> <span class=n>args</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>Now, our function will forward the call to the <code>sayHello()</code> method of the <code>GreetingService</code> that we injected 🥳</p><p>Let&rsquo;s build and run our <strong>Spring Booted Azure Function</strong> 🤪</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@SpringBootApplication</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>SpringFunctionsAzureApplication</span> <span class=o>{</span>
+
+    <span class=nd>@Autowired</span>
+    <span class=kd>private</span> <span class=n>GreetingService</span> <span class=n>greetingService</span><span class=o>;</span>
+
+    <span class=nd>@Bean</span>
+    <span class=kd>public</span> <span class=n>Function</span><span class=o>&lt;</span><span class=n>User</span><span class=o>,</span> <span class=n>Greeting</span><span class=o>&gt;</span> <span class=nf>hello</span><span class=o>()</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=n>user</span> <span class=o>-&gt;</span> <span class=n>greetingService</span><span class=o>.</span><span class=na>sayHello</span><span class=o>(</span><span class=n>user</span><span class=o>);</span>
+    <span class=o>}</span>
+
+    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>void</span> <span class=nf>main</span><span class=o>(</span><span class=n>String</span><span class=o>[]</span> <span class=n>args</span><span class=o>)</span> <span class=kd>throws</span> <span class=n>Exception</span> <span class=o>{</span>
+        <span class=n>SpringApplication</span><span class=o>.</span><span class=na>run</span><span class=o>(</span><span class=n>SpringFunctionsAzureApplication</span><span class=o>.</span><span class=na>class</span><span class=o>,</span> <span class=n>args</span><span class=o>);</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Now, our function will forward the call to the <code>sayHello()</code> method of the <code>GreetingService</code> that we injected 🥳</p>
+<p>Let&rsquo;s build and run our <strong>Spring Booted Azure Function</strong> 🤪</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -544,69 +799,103 @@ Generate a blank new Spring Boot application using Spring Initializr</p></div><p
 </span><span class=lnt>41
 </span><span class=lnt>42
 </span><span class=lnt>43
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ mvn clean package azure-functions:run 
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>...
-</span></span><span class=line><span class=cl><span class=o>[</span>INFO<span class=o>]</span> --- azure-functions-maven-plugin:1.3.4:run <span class=o>(</span>default-cli<span class=o>)</span> @ spring-functions-azure ---
-</span></span><span class=line><span class=cl>..
-</span></span><span class=line><span class=cl><span class=o>[</span>INFO<span class=o>]</span> Azure Functions Core Tools found.
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>                  %%%%%%
-</span></span><span class=line><span class=cl>                 %%%%%%
-</span></span><span class=line><span class=cl>            @   %%%%%%    @
-</span></span><span class=line><span class=cl>          @@   %%%%%%      @@
-</span></span><span class=line><span class=cl>       @@@    %%%%%%%%%%%    @@@
-</span></span><span class=line><span class=cl>     @@      %%%%%%%%%%        @@
-</span></span><span class=line><span class=cl>       @@         %%%%       @@
-</span></span><span class=line><span class=cl>         @@      %%%       @@
-</span></span><span class=line><span class=cl>           @@    %%      @@
-</span></span><span class=line><span class=cl>                %%
-</span></span><span class=line><span class=cl>                %
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>Azure Functions Core Tools <span class=o>(</span>2.7.1846 Commit hash: 458c671341fda1c52bd46e1aa8943cb26e467830<span class=o>)</span>
-</span></span><span class=line><span class=cl>Function Runtime Version: 2.0.12858.0
-</span></span><span class=line><span class=cl>..
-</span></span><span class=line><span class=cl><span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Generating <span class=m>1</span> job <span class=k>function</span><span class=o>(</span>s<span class=o>)</span>
-</span></span><span class=line><span class=cl><span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Found the following functions:
-</span></span><span class=line><span class=cl><span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Host.Functions.greet
-</span></span><span class=line><span class=cl><span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> 
-</span></span><span class=line><span class=cl><span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Initializing <span class=k>function</span> HTTP routes
-</span></span><span class=line><span class=cl><span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Mapped <span class=k>function</span> route <span class=s1>&#39;api/greet&#39;</span> <span class=o>[</span>POST<span class=o>]</span> to <span class=s1>&#39;greet&#39;</span>
-</span></span><span class=line><span class=cl><span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> 
-</span></span><span class=line><span class=cl><span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Host initialized <span class=o>(</span>213ms<span class=o>)</span>
-</span></span><span class=line><span class=cl><span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Host started <span class=o>(</span>218ms<span class=o>)</span>
-</span></span><span class=line><span class=cl><span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Job host started
-</span></span><span class=line><span class=cl><span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Listening <span class=k>for</span> transport dt_socket at address: <span class=m>5005</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>Http Functions:
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>	greet: <span class=o>[</span>POST<span class=o>]</span> http://localhost:7071/api/greet
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>Hosting environment: Production
-</span></span><span class=line><span class=cl>..
-</span></span><span class=line><span class=cl>Now listening on: http://0.0.0.0:7071
-</span></span><span class=line><span class=cl>Application started. Press Ctrl+C to shut down.
-</span></span><span class=line><span class=cl><span class=o>[</span>19/11/2019 20:33:43<span class=o>]</span> Host lock lease acquired by instance ID <span class=s1>&#39;00000000000000000000000014D8753A&#39;</span>.
-</span></span></code></pre></td></tr></table></div></div><p>To consume our Function, just <strong>POST</strong> a <strong>User Payload</strong> to the shown URL:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ curl http://localhost:7071/api/greet -d <span class=s2>&#34;{\&#34;name\&#34;:\&#34;Nebrass\&#34;}&#34;</span>
-</span></span></code></pre></td></tr></table></div></div><p>The response will look like:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ mvn clean package azure-functions:run 
+
+...
+<span class=o>[</span>INFO<span class=o>]</span> --- azure-functions-maven-plugin:1.3.4:run <span class=o>(</span>default-cli<span class=o>)</span> @ spring-functions-azure ---
+..
+<span class=o>[</span>INFO<span class=o>]</span> Azure Functions Core Tools found.
+
+                  %%%%%%
+                 %%%%%%
+            @   %%%%%%    @
+          @@   %%%%%%      @@
+       @@@    %%%%%%%%%%%    @@@
+     @@      %%%%%%%%%%        @@
+       @@         %%%%       @@
+         @@      %%%       @@
+           @@    %%      @@
+                %%
+                %
+
+Azure Functions Core Tools <span class=o>(</span>2.7.1846 Commit hash: 458c671341fda1c52bd46e1aa8943cb26e467830<span class=o>)</span>
+Function Runtime Version: 2.0.12858.0
+..
+<span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Generating <span class=m>1</span> job <span class=k>function</span><span class=o>(</span>s<span class=o>)</span>
+<span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Found the following functions:
+<span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Host.Functions.greet
+<span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> 
+<span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Initializing <span class=k>function</span> HTTP routes
+<span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Mapped <span class=k>function</span> route <span class=s1>&#39;api/greet&#39;</span> <span class=o>[</span>POST<span class=o>]</span> to <span class=s1>&#39;greet&#39;</span>
+<span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> 
+<span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Host initialized <span class=o>(</span>213ms<span class=o>)</span>
+<span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Host started <span class=o>(</span>218ms<span class=o>)</span>
+<span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Job host started
+<span class=o>[</span>19/11/2019 20:33:36<span class=o>]</span> Listening <span class=k>for</span> transport dt_socket at address: <span class=m>5005</span>
+
+Http Functions:
+
+	greet: <span class=o>[</span>POST<span class=o>]</span> http://localhost:7071/api/greet
+
+Hosting environment: Production
+..
+Now listening on: http://0.0.0.0:7071
+Application started. Press Ctrl+C to shut down.
+<span class=o>[</span>19/11/2019 20:33:43<span class=o>]</span> Host lock lease acquired by instance ID <span class=s1>&#39;00000000000000000000000014D8753A&#39;</span>.
+</code></pre></td></tr></table>
+</div>
+</div><p>To consume our Function, just <strong>POST</strong> a <strong>User Payload</strong> to the shown URL:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ curl http://localhost:7071/api/greet -d <span class=s2>&#34;{\&#34;name\&#34;:\&#34;Nebrass\&#34;}&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The response will look like:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
-</span></span><span class=line><span class=cl>  <span class=nt>&#34;message&#34;</span><span class=p>:</span> <span class=s2>&#34;Hello Nebrass&#34;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>Cool ! Our <strong>HTTP Request</strong> is now propagated from <strong>Azure Functions Host</strong> to the <strong>Spring Boot Context</strong> 🥳</p><div align=center><p><img loading=lazy src=../images/azure-functions-to-spring-context-1024x484.webp alt="HTTP Request propagation from Azure Functions to Spring Context" title="HTTP Request propagation from Azure Functions to Spring Context">
-HTTP Request propagation from Azure Functions to Spring Context</p></div><p>We can now go further to do more tasks. We can for example make some advanced operations like inserting data to <strong>CosmosDB</strong> from the <strong>Spring Service</strong> and based on the <strong>Azure Functions Connection Strings</strong> 😁</p><h2 id=accessing-cosmos-db-from-spring-service>Accessing Cosmos DB from Spring Service<a hidden class=anchor aria-hidden=true href=#accessing-cosmos-db-from-spring-service>#</a></h2><p>Now, just add this <strong>Spring Data CosmosDB</strong> dependency to our <code>pom.xml</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=p>{</span>
+  <span class=nt>&#34;message&#34;</span><span class=p>:</span> <span class=s2>&#34;Hello Nebrass&#34;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Cool ! Our <strong>HTTP Request</strong> is now propagated from <strong>Azure Functions Host</strong> to the <strong>Spring Boot Context</strong> 🥳</p>
+<div align=center>
+<p><img loading=lazy src=../images/azure-functions-to-spring-context-1024x484.webp alt="HTTP Request propagation from Azure Functions to Spring Context" title="HTTP Request propagation from Azure Functions to Spring Context">
+HTTP Request propagation from Azure Functions to Spring Context</p>
+</div>
+<p>We can now go further to do more tasks. We can for example make some advanced operations like inserting data to <strong>CosmosDB</strong> from the <strong>Spring Service</strong> and based on the <strong>Azure Functions Connection Strings</strong> 😁</p>
+<h2 id=accessing-cosmos-db-from-spring-service>Accessing Cosmos DB from Spring Service<a hidden class=anchor aria-hidden=true href=#accessing-cosmos-db-from-spring-service>#</a></h2>
+<p>Now, just add this <strong>Spring Data CosmosDB</strong> dependency to our <code>pom.xml</code>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;dependency&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;groupId&gt;</span>com.microsoft.azure<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>spring-data-cosmosdb<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;version&gt;</span>2.2.1.M1<span class=nt>&lt;/version&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/dependency&gt;</span>
-</span></span></code></pre></td></tr></table></div></div><p>Now, we need to create the <code>CosmosDbConfiguration</code> class:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;dependency&gt;</span>
+    <span class=nt>&lt;groupId&gt;</span>com.microsoft.azure<span class=nt>&lt;/groupId&gt;</span>
+    <span class=nt>&lt;artifactId&gt;</span>spring-data-cosmosdb<span class=nt>&lt;/artifactId&gt;</span>
+    <span class=nt>&lt;version&gt;</span>2.2.1.M1<span class=nt>&lt;/version&gt;</span>
+<span class=nt>&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Now, we need to create the <code>CosmosDbConfiguration</code> class:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -627,38 +916,61 @@ HTTP Request propagation from Azure Functions to Spring Context</p></div><p>We c
 </span><span class=lnt>19
 </span><span class=lnt>20
 </span><span class=lnt>21
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Configuration</span>
-</span></span><span class=line><span class=cl><span class=nd>@EnableCosmosRepositories</span><span class=o>(</span><span class=n>basePackageClasses</span> <span class=o>=</span> <span class=n>StudentRepository</span><span class=o>.</span><span class=na>class</span><span class=o>)</span>
-</span></span><span class=line><span class=cl><span class=nd>@Slf4j</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>CosmosDBConfiguration</span> <span class=kd>extends</span> <span class=n>AbstractCosmosConfiguration</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${CosmosDbConnection}&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>key</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${azure.cosmosdb.database}&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>dbName</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Bean</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>CosmosDBConfig</span> <span class=nf>getConfig</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>CosmosDBConfig</span> <span class=n>cosmosdbConfig</span> <span class=o>=</span> <span class=n>CosmosDBConfig</span><span class=o>.</span><span class=na>builder</span><span class=o>(</span><span class=n>key</span><span class=o>,</span> <span class=n>dbName</span><span class=o>).</span><span class=na>build</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>        <span class=n>log</span><span class=o>.</span><span class=na>error</span><span class=o>(</span><span class=s>&#34;key is {}&#34;</span><span class=o>,</span> <span class=n>key</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>log</span><span class=o>.</span><span class=na>error</span><span class=o>(</span><span class=s>&#34;dbName is {}&#34;</span><span class=o>,</span> <span class=n>dbName</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>cosmosdbConfig</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>The <code>@Value("${CosmosDbConnection}")</code> will grab the value from the <strong>System Environment Variables</strong>. This value will be injected in the application environment from the <strong>Azure Functions Runtime</strong> based on our configuration in the <strong>Azure Portal</strong> or from the <code>local.settings.json</code> file when working locally.</p><p>The <code>@Value("${azure.cosmosdb.database}")</code> will grab this value from the <code>application.properties</code> - so let&rsquo;s add it, it will be our <strong>CosmosDB Database Name</strong>, which I called <code>university</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>azure.cosmosdb.database=university
-</span></span></code></pre></td></tr></table></div></div><p>The <code>@EnableCosmosRepositories(basePackageClasses = StudentRepository.class)</code> annotation will inject the <code>CosmosDbConfiguration</code> that we already created in the <code>StudentRepository</code> class that we need to create now 😁</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Configuration</span>
+<span class=nd>@EnableCosmosRepositories</span><span class=o>(</span><span class=n>basePackageClasses</span> <span class=o>=</span> <span class=n>StudentRepository</span><span class=o>.</span><span class=na>class</span><span class=o>)</span>
+<span class=nd>@Slf4j</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>CosmosDBConfiguration</span> <span class=kd>extends</span> <span class=n>AbstractCosmosConfiguration</span> <span class=o>{</span>
+
+    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${CosmosDbConnection}&#34;</span><span class=o>)</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>key</span><span class=o>;</span>
+
+    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${azure.cosmosdb.database}&#34;</span><span class=o>)</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>dbName</span><span class=o>;</span>
+
+    <span class=nd>@Bean</span>
+    <span class=kd>public</span> <span class=n>CosmosDBConfig</span> <span class=nf>getConfig</span><span class=o>()</span> <span class=o>{</span>
+        <span class=n>CosmosDBConfig</span> <span class=n>cosmosdbConfig</span> <span class=o>=</span> <span class=n>CosmosDBConfig</span><span class=o>.</span><span class=na>builder</span><span class=o>(</span><span class=n>key</span><span class=o>,</span> <span class=n>dbName</span><span class=o>).</span><span class=na>build</span><span class=o>();</span>
+
+        <span class=n>log</span><span class=o>.</span><span class=na>error</span><span class=o>(</span><span class=s>&#34;key is {}&#34;</span><span class=o>,</span> <span class=n>key</span><span class=o>);</span>
+        <span class=n>log</span><span class=o>.</span><span class=na>error</span><span class=o>(</span><span class=s>&#34;dbName is {}&#34;</span><span class=o>,</span> <span class=n>dbName</span><span class=o>);</span>
+
+        <span class=k>return</span> <span class=n>cosmosdbConfig</span><span class=o>;</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>The <code>@Value("${CosmosDbConnection}")</code> will grab the value from the <strong>System Environment Variables</strong>. This value will be injected in the application environment from the <strong>Azure Functions Runtime</strong> based on our configuration in the <strong>Azure Portal</strong> or from the <code>local.settings.json</code> file when working locally.</p>
+<p>The <code>@Value("${azure.cosmosdb.database}")</code> will grab this value from the <code>application.properties</code> - so let&rsquo;s add it, it will be our <strong>CosmosDB Database Name</strong>, which I called <code>university</code>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>azure.cosmosdb.database=university
+</code></pre></td></tr></table>
+</div>
+</div><p>The <code>@EnableCosmosRepositories(basePackageClasses = StudentRepository.class)</code> annotation will inject the <code>CosmosDbConfiguration</code> that we already created in the <code>StudentRepository</code> class that we need to create now 😁</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Repository</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>interface</span> <span class=nc>StudentRepository</span> <span class=kd>extends</span> <span class=n>CosmosRepository</span><span class=o>&lt;</span><span class=n>Student</span><span class=o>,</span> <span class=n>String</span><span class=o>&gt;</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=n>List</span><span class=o>&lt;</span><span class=n>Student</span><span class=o>&gt;</span> <span class=nf>findByName</span><span class=o>(</span><span class=n>String</span> <span class=n>name</span><span class=o>);</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>It&rsquo;s a very classic <strong>Spring Data Repository interface</strong> 😆nothing special ! and this is the beauty of <strong>Spring Boot</strong> !</p><p>Now we can inject our <code>StudentRepository</code> in any <strong>Spring Service class</strong> and enjoy its powerful features:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Repository</span>
+<span class=kd>public</span> <span class=kd>interface</span> <span class=nc>StudentRepository</span> <span class=kd>extends</span> <span class=n>CosmosRepository</span><span class=o>&lt;</span><span class=n>Student</span><span class=o>,</span> <span class=n>String</span><span class=o>&gt;</span> <span class=o>{</span>
+    <span class=n>List</span><span class=o>&lt;</span><span class=n>Student</span><span class=o>&gt;</span> <span class=nf>findByName</span><span class=o>(</span><span class=n>String</span> <span class=n>name</span><span class=o>);</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>It&rsquo;s a very classic <strong>Spring Data Repository interface</strong> 😆nothing special ! and this is the beauty of <strong>Spring Boot</strong> !</p>
+<p>Now we can inject our <code>StudentRepository</code> in any <strong>Spring Service class</strong> and enjoy its powerful features:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -671,20 +983,57 @@ HTTP Request propagation from Azure Functions to Spring Context</p></div><p>We c
 </span><span class=lnt>11
 </span><span class=lnt>12
 </span><span class=lnt>13
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Service</span>
-</span></span><span class=line><span class=cl><span class=nd>@Slf4j</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>StudentsService</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Autowired</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>StudentsRepository</span> <span class=n>studentsRepository</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>countUsers</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>List</span><span class=o>&lt;</span><span class=n>User</span><span class=o>&gt;</span> <span class=n>studentsList</span> <span class=o>=</span> <span class=k>new</span> <span class=n>ArrayList</span><span class=o>&lt;&gt;();</span>
-</span></span><span class=line><span class=cl>        <span class=k>this</span><span class=o>.</span><span class=na>studentsRepository</span><span class=o>.</span><span class=na>findAll</span><span class=o>().</span><span class=na>forEach</span><span class=o>(</span><span class=n>studentsList</span><span class=o>::</span><span class=n>add</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>        <span class=n>log</span><span class=o>.</span><span class=na>info</span><span class=o>(</span><span class=s>&#34;We have {} records in the Students DB&#34;</span><span class=o>,</span> <span class=n>studentsList</span><span class=o>.</span><span class=na>size</span><span class=o>());</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>So simple !! In this way, you can enjoy all the features and the facilities of the <strong>Spring Boot</strong> in the <strong>Azure Functions Java</strong> projects !</p><p>Have fun ! 🥳</p></div><footer class=post-footer><ul class=post-tags></ul><div class=share-buttons><a target=_blank rel="noopener noreferrer" aria-label="share Playing with Spring Cloud in Azure Functions on twitter" href="https://twitter.com/intent/tweet/?text=Playing%20with%20Spring%20Cloud%20in%20Azure%20Functions&url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f&hashtags="><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM195.519 424.544c135.939.0 210.268-112.643 210.268-210.268.0-3.218.0-6.437-.153-9.502 14.406-10.421 26.973-23.448 36.935-38.314-13.18 5.824-27.433 9.809-42.452 11.648 15.326-9.196 26.973-23.602 32.49-40.92-14.252 8.429-30.038 14.56-46.896 17.931-13.487-14.406-32.644-23.295-53.946-23.295-40.767.0-73.87 33.104-73.87 73.87.0 5.824.613 11.494 1.992 16.858-61.456-3.065-115.862-32.49-152.337-77.241-6.284 10.881-9.962 23.601-9.962 37.088.0 25.594 13.027 48.276 32.95 61.456-12.107-.307-23.448-3.678-33.41-9.196v.92c0 35.862 25.441 65.594 59.311 72.49-6.13 1.686-12.72 2.606-19.464 2.606-4.751.0-9.348-.46-13.946-1.38 9.349 29.426 36.628 50.728 68.965 51.341-25.287 19.771-57.164 31.571-91.8 31.571-5.977.0-11.801-.306-17.625-1.073 32.337 21.15 71.264 33.41 112.95 33.41z"/></svg></a><a target=_blank rel="noopener noreferrer" aria-label="share Playing with Spring Cloud in Azure Functions on linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f&title=Playing%20with%20Spring%20Cloud%20in%20Azure%20Functions&summary=Playing%20with%20Spring%20Cloud%20in%20Azure%20Functions&source=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM160.461 423.278V197.561h-75.04v225.717h75.04zm270.539.0V293.839c0-69.333-37.018-101.586-86.381-101.586-39.804.0-57.634 21.891-67.617 37.266v-31.958h-75.021c.995 21.181.0 225.717.0 225.717h75.02V297.222c0-6.748.486-13.492 2.474-18.315 5.414-13.475 17.767-27.434 38.494-27.434 27.135.0 38.007 20.707 38.007 51.037v120.768H431zM123.448 88.722C97.774 88.722 81 105.601 81 127.724c0 21.658 16.264 39.002 41.455 39.002h.484c26.165.0 42.452-17.344 42.452-39.002-.485-22.092-16.241-38.954-41.943-39.002z"/></svg></a><a target=_blank rel="noopener noreferrer" aria-label="share Playing with Spring Cloud in Azure Functions on reddit" href="https://reddit.com/submit?url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f&title=Playing%20with%20Spring%20Cloud%20in%20Azure%20Functions"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM446 265.638c0-22.964-18.616-41.58-41.58-41.58-11.211.0-21.361 4.457-28.841 11.666-28.424-20.508-67.586-33.757-111.204-35.278l18.941-89.121 61.884 13.157c.756 15.734 13.642 28.29 29.56 28.29 16.407.0 29.706-13.299 29.706-29.701.0-16.403-13.299-29.702-29.706-29.702-11.666.0-21.657 6.792-26.515 16.578l-69.105-14.69c-1.922-.418-3.939-.042-5.585 1.036-1.658 1.073-2.811 2.761-3.224 4.686l-21.152 99.438c-44.258 1.228-84.046 14.494-112.837 35.232-7.468-7.164-17.589-11.591-28.757-11.591-22.965.0-41.585 18.616-41.585 41.58.0 16.896 10.095 31.41 24.568 37.918-.639 4.135-.99 8.328-.99 12.576.0 63.977 74.469 115.836 166.33 115.836s166.334-51.859 166.334-115.836c0-4.218-.347-8.387-.977-12.493 14.564-6.47 24.735-21.034 24.735-38.001zM326.526 373.831c-20.27 20.241-59.115 21.816-70.534 21.816-11.428.0-50.277-1.575-70.522-21.82-3.007-3.008-3.007-7.882.0-10.889 3.003-2.999 7.882-3.003 10.885.0 12.777 12.781 40.11 17.317 59.637 17.317 19.522.0 46.86-4.536 59.657-17.321 3.016-2.999 7.886-2.995 10.885.008 3.008 3.011 3.003 7.882-.008 10.889zm-5.23-48.781c-16.373.0-29.701-13.324-29.701-29.698.0-16.381 13.328-29.714 29.701-29.714 16.378.0 29.706 13.333 29.706 29.714.0 16.374-13.328 29.698-29.706 29.698zM160.91 295.348c0-16.381 13.328-29.71 29.714-29.71 16.369.0 29.689 13.329 29.689 29.71.0 16.373-13.32 29.693-29.689 29.693-16.386.0-29.714-13.32-29.714-29.693z"/></svg></a><a target=_blank rel="noopener noreferrer" aria-label="share Playing with Spring Cloud in Azure Functions on facebook" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H342.978V319.085h66.6l12.672-82.621h-79.272v-53.617c0-22.603 11.073-44.636 46.58-44.636H425.6v-70.34s-32.71-5.582-63.982-5.582c-65.288.0-107.96 39.569-107.96 111.204v62.971h-72.573v82.621h72.573V512h-191.104c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892z"/></svg></a><a target=_blank rel="noopener noreferrer" aria-label="share Playing with Spring Cloud in Azure Functions on whatsapp" href="https://api.whatsapp.com/send?text=Playing%20with%20Spring%20Cloud%20in%20Azure%20Functions%20-%20https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zm-58.673 127.703c-33.842-33.881-78.847-52.548-126.798-52.568-98.799.0-179.21 80.405-179.249 179.234-.013 31.593 8.241 62.428 23.927 89.612l-25.429 92.884 95.021-24.925c26.181 14.28 55.659 21.807 85.658 21.816h.074c98.789.0 179.206-80.413 179.247-179.243.018-47.895-18.61-92.93-52.451-126.81zM263.976 403.485h-.06c-26.734-.01-52.954-7.193-75.828-20.767l-5.441-3.229-56.386 14.792 15.05-54.977-3.542-5.637c-14.913-23.72-22.791-51.136-22.779-79.287.033-82.142 66.867-148.971 149.046-148.971 39.793.014 77.199 15.531 105.329 43.692 28.128 28.16 43.609 65.592 43.594 105.4-.034 82.149-66.866 148.983-148.983 148.984zm81.721-111.581c-4.479-2.242-26.499-13.075-30.604-14.571-4.105-1.495-7.091-2.241-10.077 2.241-2.986 4.483-11.569 14.572-14.182 17.562-2.612 2.988-5.225 3.364-9.703 1.12-4.479-2.241-18.91-6.97-36.017-22.23C231.8 264.15 222.81 249.484 220.198 245s-.279-6.908 1.963-9.14c2.016-2.007 4.48-5.232 6.719-7.847 2.24-2.615 2.986-4.484 4.479-7.472 1.493-2.99.747-5.604-.374-7.846-1.119-2.241-10.077-24.288-13.809-33.256-3.635-8.733-7.327-7.55-10.077-7.688-2.609-.13-5.598-.158-8.583-.158-2.986.0-7.839 1.121-11.944 5.604-4.105 4.484-15.675 15.32-15.675 37.364.0 22.046 16.048 43.342 18.287 46.332 2.24 2.99 31.582 48.227 76.511 67.627 10.685 4.615 19.028 7.371 25.533 9.434 10.728 3.41 20.492 2.929 28.209 1.775 8.605-1.285 26.499-10.833 30.231-21.295 3.732-10.464 3.732-19.431 2.612-21.298-1.119-1.869-4.105-2.99-8.583-5.232z"/></svg></a><a target=_blank rel="noopener noreferrer" aria-label="share Playing with Spring Cloud in Azure Functions on telegram" href="https://telegram.me/share/url?text=Playing%20with%20Spring%20Cloud%20in%20Azure%20Functions&url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f"><svg viewBox="2 2 28 28"><path d="M26.49 29.86H5.5a3.37 3.37.0 01-2.47-1 3.35 3.35.0 01-1-2.47V5.48A3.36 3.36.0 013 3 3.37 3.37.0 015.5 2h21A3.38 3.38.0 0129 3a3.36 3.36.0 011 2.46V26.37a3.35 3.35.0 01-1 2.47 3.38 3.38.0 01-2.51 1.02zm-5.38-6.71a.79.79.0 00.85-.66L24.73 9.24a.55.55.0 00-.18-.46.62.62.0 00-.41-.17q-.08.0-16.53 6.11a.59.59.0 00-.41.59.57.57.0 00.43.52l4 1.24 1.61 4.83a.62.62.0 00.63.43.56.56.0 00.4-.17L16.54 20l4.09 3A.9.9.0 0021.11 23.15zM13.8 20.71l-1.21-4q8.72-5.55 8.78-5.55c.15.0.23.0.23.16a.18.18.0 010 .06s-2.51 2.3-7.52 6.8z"/></svg></a></div></footer></article></main><footer class=footer><span>&copy; 2022 <a href=https://blog.nebrass.fr>Nebrass Homepage</a></span>
-<span>Powered by
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Service</span>
+<span class=nd>@Slf4j</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>StudentsService</span> <span class=o>{</span>
+
+    <span class=nd>@Autowired</span>
+    <span class=kd>private</span> <span class=n>StudentsRepository</span> <span class=n>studentsRepository</span><span class=o>;</span>
+
+    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>countUsers</span><span class=o>()</span> <span class=o>{</span>
+        <span class=n>List</span><span class=o>&lt;</span><span class=n>User</span><span class=o>&gt;</span> <span class=n>studentsList</span> <span class=o>=</span> <span class=k>new</span> <span class=n>ArrayList</span><span class=o>&lt;&gt;();</span>
+        <span class=k>this</span><span class=o>.</span><span class=na>studentsRepository</span><span class=o>.</span><span class=na>findAll</span><span class=o>().</span><span class=na>forEach</span><span class=o>(</span><span class=n>studentsList</span><span class=o>::</span><span class=n>add</span><span class=o>);</span>
+        <span class=n>log</span><span class=o>.</span><span class=na>info</span><span class=o>(</span><span class=s>&#34;We have {} records in the Students DB&#34;</span><span class=o>,</span> <span class=n>studentsList</span><span class=o>.</span><span class=na>size</span><span class=o>());</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>So simple !! In this way, you can enjoy all the features and the facilities of the <strong>Spring Boot</strong> in the <strong>Azure Functions Java</strong> projects !</p>
+<p>Have fun ! 🥳</p>
+</div>
+<footer class=post-footer>
+<ul class=post-tags>
+</ul>
+<div class=share-buttons>
+<a target=_blank rel="noopener noreferrer" aria-label="share Playing with Spring Cloud in Azure Functions on twitter" href="https://twitter.com/intent/tweet/?text=Playing%20with%20Spring%20Cloud%20in%20Azure%20Functions&url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f&hashtags="><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM195.519 424.544c135.939.0 210.268-112.643 210.268-210.268.0-3.218.0-6.437-.153-9.502 14.406-10.421 26.973-23.448 36.935-38.314-13.18 5.824-27.433 9.809-42.452 11.648 15.326-9.196 26.973-23.602 32.49-40.92-14.252 8.429-30.038 14.56-46.896 17.931-13.487-14.406-32.644-23.295-53.946-23.295-40.767.0-73.87 33.104-73.87 73.87.0 5.824.613 11.494 1.992 16.858-61.456-3.065-115.862-32.49-152.337-77.241-6.284 10.881-9.962 23.601-9.962 37.088.0 25.594 13.027 48.276 32.95 61.456-12.107-.307-23.448-3.678-33.41-9.196v.92c0 35.862 25.441 65.594 59.311 72.49-6.13 1.686-12.72 2.606-19.464 2.606-4.751.0-9.348-.46-13.946-1.38 9.349 29.426 36.628 50.728 68.965 51.341-25.287 19.771-57.164 31.571-91.8 31.571-5.977.0-11.801-.306-17.625-1.073 32.337 21.15 71.264 33.41 112.95 33.41z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Playing with Spring Cloud in Azure Functions on linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f&title=Playing%20with%20Spring%20Cloud%20in%20Azure%20Functions&summary=Playing%20with%20Spring%20Cloud%20in%20Azure%20Functions&source=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM160.461 423.278V197.561h-75.04v225.717h75.04zm270.539.0V293.839c0-69.333-37.018-101.586-86.381-101.586-39.804.0-57.634 21.891-67.617 37.266v-31.958h-75.021c.995 21.181.0 225.717.0 225.717h75.02V297.222c0-6.748.486-13.492 2.474-18.315 5.414-13.475 17.767-27.434 38.494-27.434 27.135.0 38.007 20.707 38.007 51.037v120.768H431zM123.448 88.722C97.774 88.722 81 105.601 81 127.724c0 21.658 16.264 39.002 41.455 39.002h.484c26.165.0 42.452-17.344 42.452-39.002-.485-22.092-16.241-38.954-41.943-39.002z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Playing with Spring Cloud in Azure Functions on reddit" href="https://reddit.com/submit?url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f&title=Playing%20with%20Spring%20Cloud%20in%20Azure%20Functions"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM446 265.638c0-22.964-18.616-41.58-41.58-41.58-11.211.0-21.361 4.457-28.841 11.666-28.424-20.508-67.586-33.757-111.204-35.278l18.941-89.121 61.884 13.157c.756 15.734 13.642 28.29 29.56 28.29 16.407.0 29.706-13.299 29.706-29.701.0-16.403-13.299-29.702-29.706-29.702-11.666.0-21.657 6.792-26.515 16.578l-69.105-14.69c-1.922-.418-3.939-.042-5.585 1.036-1.658 1.073-2.811 2.761-3.224 4.686l-21.152 99.438c-44.258 1.228-84.046 14.494-112.837 35.232-7.468-7.164-17.589-11.591-28.757-11.591-22.965.0-41.585 18.616-41.585 41.58.0 16.896 10.095 31.41 24.568 37.918-.639 4.135-.99 8.328-.99 12.576.0 63.977 74.469 115.836 166.33 115.836s166.334-51.859 166.334-115.836c0-4.218-.347-8.387-.977-12.493 14.564-6.47 24.735-21.034 24.735-38.001zM326.526 373.831c-20.27 20.241-59.115 21.816-70.534 21.816-11.428.0-50.277-1.575-70.522-21.82-3.007-3.008-3.007-7.882.0-10.889 3.003-2.999 7.882-3.003 10.885.0 12.777 12.781 40.11 17.317 59.637 17.317 19.522.0 46.86-4.536 59.657-17.321 3.016-2.999 7.886-2.995 10.885.008 3.008 3.011 3.003 7.882-.008 10.889zm-5.23-48.781c-16.373.0-29.701-13.324-29.701-29.698.0-16.381 13.328-29.714 29.701-29.714 16.378.0 29.706 13.333 29.706 29.714.0 16.374-13.328 29.698-29.706 29.698zM160.91 295.348c0-16.381 13.328-29.71 29.714-29.71 16.369.0 29.689 13.329 29.689 29.71.0 16.373-13.32 29.693-29.689 29.693-16.386.0-29.714-13.32-29.714-29.693z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Playing with Spring Cloud in Azure Functions on facebook" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H342.978V319.085h66.6l12.672-82.621h-79.272v-53.617c0-22.603 11.073-44.636 46.58-44.636H425.6v-70.34s-32.71-5.582-63.982-5.582c-65.288.0-107.96 39.569-107.96 111.204v62.971h-72.573v82.621h72.573V512h-191.104c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Playing with Spring Cloud in Azure Functions on whatsapp" href="https://api.whatsapp.com/send?text=Playing%20with%20Spring%20Cloud%20in%20Azure%20Functions%20-%20https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zm-58.673 127.703c-33.842-33.881-78.847-52.548-126.798-52.568-98.799.0-179.21 80.405-179.249 179.234-.013 31.593 8.241 62.428 23.927 89.612l-25.429 92.884 95.021-24.925c26.181 14.28 55.659 21.807 85.658 21.816h.074c98.789.0 179.206-80.413 179.247-179.243.018-47.895-18.61-92.93-52.451-126.81zM263.976 403.485h-.06c-26.734-.01-52.954-7.193-75.828-20.767l-5.441-3.229-56.386 14.792 15.05-54.977-3.542-5.637c-14.913-23.72-22.791-51.136-22.779-79.287.033-82.142 66.867-148.971 149.046-148.971 39.793.014 77.199 15.531 105.329 43.692 28.128 28.16 43.609 65.592 43.594 105.4-.034 82.149-66.866 148.983-148.983 148.984zm81.721-111.581c-4.479-2.242-26.499-13.075-30.604-14.571-4.105-1.495-7.091-2.241-10.077 2.241-2.986 4.483-11.569 14.572-14.182 17.562-2.612 2.988-5.225 3.364-9.703 1.12-4.479-2.241-18.91-6.97-36.017-22.23C231.8 264.15 222.81 249.484 220.198 245s-.279-6.908 1.963-9.14c2.016-2.007 4.48-5.232 6.719-7.847 2.24-2.615 2.986-4.484 4.479-7.472 1.493-2.99.747-5.604-.374-7.846-1.119-2.241-10.077-24.288-13.809-33.256-3.635-8.733-7.327-7.55-10.077-7.688-2.609-.13-5.598-.158-8.583-.158-2.986.0-7.839 1.121-11.944 5.604-4.105 4.484-15.675 15.32-15.675 37.364.0 22.046 16.048 43.342 18.287 46.332 2.24 2.99 31.582 48.227 76.511 67.627 10.685 4.615 19.028 7.371 25.533 9.434 10.728 3.41 20.492 2.929 28.209 1.775 8.605-1.285 26.499-10.833 30.231-21.295 3.732-10.464 3.732-19.431 2.612-21.298-1.119-1.869-4.105-2.99-8.583-5.232z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Playing with Spring Cloud in Azure Functions on telegram" href="https://telegram.me/share/url?text=Playing%20with%20Spring%20Cloud%20in%20Azure%20Functions&url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-spring-cloud-in-azure-functions%2f"><svg viewBox="2 2 28 28"><path d="M26.49 29.86H5.5a3.37 3.37.0 01-2.47-1 3.35 3.35.0 01-1-2.47V5.48A3.36 3.36.0 013 3 3.37 3.37.0 015.5 2h21A3.38 3.38.0 0129 3a3.36 3.36.0 011 2.46V26.37a3.35 3.35.0 01-1 2.47 3.38 3.38.0 01-2.51 1.02zm-5.38-6.71a.79.79.0 00.85-.66L24.73 9.24a.55.55.0 00-.18-.46.62.62.0 00-.41-.17q-.08.0-16.53 6.11a.59.59.0 00-.41.59.57.57.0 00.43.52l4 1.24 1.61 4.83a.62.62.0 00.63.43.56.56.0 00.4-.17L16.54 20l4.09 3A.9.9.0 0021.11 23.15zM13.8 20.71l-1.21-4q8.72-5.55 8.78-5.55c.15.0.23.0.23.16a.18.18.0 010 .06s-2.51 2.3-7.52 6.8z"/></svg>
+</a>
+</div>
+</footer>
+</article>
+</main>
+<footer class=footer>
+<span>&copy; 2022 <a href=https://blog.nebrass.fr>Nebrass Homepage</a></span>
+<span>
+Powered by
 <a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
-        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg></a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(t){t.preventDefault();var e=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(e)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(e)}']`).scrollIntoView({behavior:"smooth"}),e==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${e}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script></body></html>
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+</body>
+</html>

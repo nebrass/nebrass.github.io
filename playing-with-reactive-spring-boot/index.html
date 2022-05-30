@@ -1,20 +1,135 @@
-<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Playing with Reactive Spring Boot | Nebrass Homepage</title><meta name=keywords content><meta name=description content="Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃 I was waiting for the landscape to be mature to made a one-shot tutorial 😁
-Today, I will show you how to make a Reactive Spring Boot application, with a Reactive CRUDs using Spring Data Reactive Relational Database Connectivity (R2DBC) with PostgreSQL and for sure the famous Webflux."><meta name=author content><link rel=canonical href=https://blog.nebrass.fr/playing-with-reactive-spring-boot/><link crossorigin=anonymous href=/assets/css/stylesheet.min.9aeab43847eb11aca320bfadedfe191ed6516dd768bf1314b534c4992aac901a.css integrity="sha256-muq0OEfrEayjIL+t7f4ZHtZRbddovxMUtTTEmSqskBo=" rel="preload stylesheet" as=style><script src=/js/prism.min.js></script>
-<link rel=stylesheet href=/css/prism.min.css><link rel=icon href=https://blog.nebrass.fr/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://blog.nebrass.fr/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://blog.nebrass.fr/favicon-32x32.png><link rel=apple-touch-icon href=https://blog.nebrass.fr/apple-touch-icon.png><link rel=mask-icon href=https://blog.nebrass.fr/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><style amp-custom>.main,.footer,.nav{max-width:calc(var(--main-width) + var(--gap) * 15)}</style><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-111781986-1","auto"),ga("send","pageview"))</script><meta property="og:title" content="Playing with Reactive Spring Boot"><meta property="og:description" content="Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃 I was waiting for the landscape to be mature to made a one-shot tutorial 😁
-Today, I will show you how to make a Reactive Spring Boot application, with a Reactive CRUDs using Spring Data Reactive Relational Database Connectivity (R2DBC) with PostgreSQL and for sure the famous Webflux."><meta property="og:type" content="article"><meta property="og:url" content="https://blog.nebrass.fr/playing-with-reactive-spring-boot/"><meta property="og:image" content="https://blog.nebrass.fr/images/playing-spring-webflux-cover.webp"><meta property="article:section" content="posts"><meta property="article:published_time" content="2020-06-01T00:00:00+00:00"><meta property="article:modified_time" content="2020-06-01T00:00:00+00:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://blog.nebrass.fr/images/playing-spring-webflux-cover.webp"><meta name=twitter:title content="Playing with Reactive Spring Boot"><meta name=twitter:description content="Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃 I was waiting for the landscape to be mature to made a one-shot tutorial 😁
-Today, I will show you how to make a Reactive Spring Boot application, with a Reactive CRUDs using Spring Data Reactive Relational Database Connectivity (R2DBC) with PostgreSQL and for sure the famous Webflux."><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"https://blog.nebrass.fr/posts/"},{"@type":"ListItem","position":3,"name":"Playing with Reactive Spring Boot","item":"https://blog.nebrass.fr/playing-with-reactive-spring-boot/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Playing with Reactive Spring Boot","name":"Playing with Reactive Spring Boot","description":"Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃 I was waiting for the landscape to be mature to made a one-shot tutorial 😁\nToday, I will show you how to make a Reactive Spring Boot application, with a Reactive CRUDs using Spring Data Reactive Relational Database Connectivity (R2DBC) with PostgreSQL and for sure the famous Webflux.","keywords":[],"articleBody":"Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃 I was waiting for the landscape to be mature to made a one-shot tutorial 😁\nToday, I will show you how to make a Reactive Spring Boot application, with a Reactive CRUDs using Spring Data Reactive Relational Database Connectivity (R2DBC) with PostgreSQL and for sure the famous Webflux. Don’t be scared if you don’t know any of these topics. We will be introducing all of them smoothly ! 😊\nBut before digging into the practice, I will be making small story-telling about the fundamentals of the reactive programming. 😎\nLet’s discover the reactive programming Reactive programming is development paradigm based around asynchronous data streams. I think this is the shortest complete definition.\nIn the reactive programming, data streams are the first class citizens. They can be events, messages, calls, and even failures that we can observe and we can react when a value is emitted. You subscribe to the event, and you will be notified when your event is fired. Moving to an events-driven style will make our application asynchronous and non blocking. Many frameworks and libraries are regularly appearing.. one of the most powerful projects is Reactor: a fourth-generation reactive library, based on the Reactive Streams specification, for building non-blocking applications on the JVM. Reactor is created and maintained by the Spring Framework teams 💪😁\nReactor logo\n Mastering the fundamentals of the reactive programming I found a FREE wonderful interactive tutorial about Reactive programming with Reactor 3. I highly recommend that you take it before continuing this tutorial 😁 the link.\nFree tutorial - Reactive Programming with Reactor 3\n Building our First Reactive Application The full source code is available on my Github.\nWe will generate our project using the Spring Initializr. Our application will have 6 dependencies:\n Spring Boot DevTools Lombok Spring Reactive Web Spring Data R2DBC PostgreSQL Driver Flyway Migration  Generating the project skull on Spring Initializr\n Before digging into the code, we need to have a PostgreSQL database 😅 I will be using a Dockerized DB. Just run this command to have a local PostgreSQL DB running into a Docker container :\n1 2 3 4  $ docker run -d --name demo-postgres \\  -e POSTGRES_USER=developer -e POSTGRES_PASSWORD=p4SSW0rd \\  -e POSTGRES_DB=demo \\  -p 5432:5432 postgres:latest   Good ! Now we can start working on my code. We will be developing a Reactive Books CRUD application.\nFirst of all we need to create the Model class which will be used to map the table structure, which is the equivalent to an Entity in JPA.\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  @Data @Table(\"book\") public class Book { @Id private Long id; private String title; private String isbn; private String author; private BigDecimal price; public Book(String title, String isbn, String author, BigDecimal price) { this.title = title; this.isbn = isbn; this.author = author; this.price = price; } }   Next, we will create a Reactive Repository to manage our Books in our DB:\n1 2 3  @Repository public interface BookRepository extends ReactiveCrudRepositoryBook, Long { }   As you see here, we are not extending from a JpaRepository like in the classic Spring Data. But we are extending from the ReactiveCrudRepository interface from the Spring Data Reactive Relational Database Connectivity (R2DBC) library.\nWe can even create a custom method in our Repository using the Spring Data Pattern. For example I will need a findBy method using an Author name and I want that the request ignore the case and it will return a Reactive Stream of 0-N Books:\n1  FluxBook findBooksByAuthorContainingIgnoreCase(String author);   Next, we will create a Spring Service class that will be a glue layer between the Repository and the RestController, and where business logic will be living.\nOur typical Service will look like:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33  @Service @RequiredArgsConstructor public class BookService { private final BookRepository bookRepository; public FluxBook findAll() { return bookRepository.findAll(); } public MonoBook findById(Long id) { return bookRepository.findById(id); } public MonoBook save(BookDTO book) { return bookRepository.save( new Book( book.getTitle(), book.getIsbn(), book.getAuthor(), book.getPrice() ) ).subscribe(); } public FluxBook findByAuthor(String author) { return bookRepository.findBooksByAuthorContainingIgnoreCase(author); } public void deleteById(Long id) { bookRepository.deleteById(id).subscribe(); } }   As you see, we have findAll() method from the Repository that is used to grab “reactively” all the records from the DB, this why it’s return type is a Flux and not our classic List. But what is a Flux ? A Flux is an Asynchronous Sequence of 0-N Items. Good ! The same way, I think you already saw the Mono, which is an Asynchronous 0-1 Result, which’s somehow like the Optional Java 8 object.\nAs you see in the save() and deleteById() methods, we are calling subscribe(). This is always done with a reactive streams, because for many actions, we need to have a subscriber for an operation to be done.\nNow, we need to create our RestController:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33  @RestController @RequestMapping(\"/books\") @RequiredArgsConstructor public class BookRestController { private final BookService bookService; @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE) public FluxBook list() { return bookService.findAll(); } @GetMapping(\"/{id}\") public MonoBook findById(@PathVariable Long id) { return bookService.findById(id); } @PostMapping @ResponseStatus(HttpStatus.CREATED) public MonoBook create(@RequestBody BookDTO bookDTO) { return bookService.save(bookDTO); } @GetMapping(\"/author\") public FluxBook findByAuthor(@RequestParam String name) { return bookService.findByAuthor(name); } @DeleteMapping(\"/{id}\") public void deleteById(@PathVariable Long id) { bookService.deleteById(id); } }   We have introduced a BookDTO class that will be a wrapping the records sent/received while interacting with the REST consumers:\n1 2 3 4 5 6 7  @Data public class BookDTO { private String title; private String isbn; private String author; private BigDecimal price; }   Now, before running our code, we need to configure PostgreSQL for R2DBC:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29  @Configuration @EnableR2dbcRepositories public class PostgresConfiguration extends AbstractR2dbcConfiguration { @Value(\"${spring.r2dbc.url}\") private String url; @Value(\"${spring.r2dbc.username}\") private String username; @Value(\"${spring.r2dbc.password}\") private String password; @Bean @Override public ConnectionFactory connectionFactory() { return new PostgresqlConnectionFactory( PostgresqlConnectionConfiguration.builder() .host(JdbcParser.getJdbcHost(url)) .port(JdbcParser.getJdbcPort(url)) .username(username) .password(password) .database(JdbcParser.getDbName(url)) .build()); } @Bean ReactiveTransactionManager transactionManager(ConnectionFactory connectionFactory) { return new R2dbcTransactionManager(connectionFactory); } }   Our application.properties file needs to have our DB credentials:\n1 2 3  spring.r2dbc.url=jdbc:postgresql://localhost:5432/demo spring.r2dbc.username=developer spring.r2dbc.password=p4SSW0rd   The JdbcParser utility class looks like:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19  public class JdbcParser { public static String getJdbcHost(String jdbc) { return getUri(jdbc).getHost(); } public static int getJdbcPort(String jdbc) { return getUri(jdbc).getPort(); } public static String getDbName(String jdbc) { return getUri(jdbc).getPath().substring(1); } private static URI getUri(String jdbc) { String substring = jdbc.substring(5); return URI.create(substring); } }   I already added Flyway to my Spring Boot dependencies. I will now configure the Flyway execution on startup using a CommandRunner:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18  @Component public class FlywayConfiguration implements CommandLineRunner { @Value(\"${spring.r2dbc.url}\") private String url; @Value(\"${spring.r2dbc.username}\") private String username; @Value(\"${spring.r2dbc.password}\") private String password; @Override public void run(String... args) { Flyway.configure() .dataSource(url, username, password) .load() .migrate(); } }   I just did this to avoid retyping PostgreSQL credentials under the spring.r2dbc.* and flyway.*\nGood ! Now we need to have the V1_0__init.sql script in the src/main/resources/db/migration folder, where Flyway is seeking SQL scripts. This initialization script will create the tables and insert some sample data:\n1 2 3 4 5 6 7 8 9 10 11 12  CREATETABLEbook(idSERIALNOTNULLPRIMARYKEY,titleVARCHAR(100),isbnVARCHAR(20),authorVARCHAR(100),priceNUMERIC(6,2));INSERTINTObook(title,isbn,author,price)values('Pairing Apache Shiro and Java EE 7','9781365124044','Nebrass Lamouchi',0);INSERTINTObook(title,isbn,author,price)values('Playing with Java Microservices on Kubernetes and OpenShift','9782956428510','Nebrass Lamouchi',9.18);  Now, let’s run the application and request the findAll() REST API:\n1 2 3 4 5 6 7 8 9  http http://localhost:8080/books HTTP/1.1 200 OK Content-Type: text/event-stream;charset=UTF-8 transfer-encoding: chunked data:{\"id\":1,\"title\":\"Pairing Apache Shiro and Java EE 7\",\"isbn\":\"9781365124044\",\"author\":\"Nebrass Lamouchi\",\"price\":0.00} data:{\"id\":2,\"title\":\"Playing with Java Microservices on Kubernetes and OpenShift\",\"isbn\":\"9782956428510\",\"author\":\"Nebrass Lamouchi\",\"price\":9.18}   Now, we will add the Swagger support to our application. First of all we need to add the SpringFox Swagger 3.0-Snapshot dependencies, as the final version is not yet released:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15   io.springfox springfox-swagger2 3.0.0-SNAPSHOT   io.springfox springfox-spring-webflux 3.0.0-SNAPSHOT   io.springfox springfox-swagger-ui 3.0.0-SNAPSHOT    These dependencies are not available on the Maven Central repository, but in JFrog OSS Snapshot repository. We need just to add it to you pom.xml:\n1 2 3 4 5 6 7    jcenter-snapshots jcenter http://oss.jfrog.org/artifactory/oss-snapshot-local/     Now, we need to configure Swagger in our application:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29  @Configuration @EnableSwagger2WebFlux public class SwaggerConfiguration { @Bean RouterFunctionServerResponse swaggerRouterFunction() { MonoServerResponse build = ServerResponse.temporaryRedirect(URI.create(\"swagger-ui.html\")).build(); return RouterFunctions.route(RequestPredicates.GET(\"/swagger\"), request - build); } @Bean public Docket api() { return new Docket(DocumentationType.SWAGGER_2) .apiInfo(apiInfo()) .select() .apis(RequestHandlerSelectors.any()) .paths(PathSelectors.any()) .build(); } private ApiInfo apiInfo() { return new ApiInfoBuilder() .title(\"Playing with Spring Webflux\") .description(\"Sample application for my blog post 'Playing with Reactive Spring Boot'\") .contact(new Contact(\"Nebrass Lamouchi\", \"https://blog.nebrass.fr\", \"lnibrass@gmail.com\")) .version(\"1.0\") .build(); } }   There is some new stuff here. Keep calm 👻 we will cover everything:\n The @EnableSwagger2Webflux annotation Indicates that Swagger support for Webflux should be enabled. The swaggerRouterFunction() method is used to define a RouterFunction for the Swagger UI ressources. A RouterFunction represents a function that routes an HTTP request to a Handling Function that will be dealing with that request.  Good ! Now our application has Swagger enabled. Just run the application and visit the http://localhost:8080/swagger-ui.html:\nSwagger UI\n Good 😊 We made our first Spring WebFlux application ! You can now dig more into the Reactive Programming style and you can for example try to create some Websockets to stream some of your data reactively from a REST API and a Websocket 🤩\nIf you have questions, please feel free to get in touch with me 😎\n","wordCount":"1700","inLanguage":"en","image":"https://blog.nebrass.fr/images/playing-spring-webflux-cover.webp","datePublished":"2020-06-01T00:00:00Z","dateModified":"2020-06-01T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.nebrass.fr/playing-with-reactive-spring-boot/"},"publisher":{"@type":"Organization","name":"Nebrass Homepage","logo":{"@type":"ImageObject","url":"https://blog.nebrass.fr/favicon.ico"}}}</script></head><body id=top><script>window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://blog.nebrass.fr accesskey=h title="Nebrass Homepage (Alt + H)">Nebrass Homepage</a>
-<span class=logo-switches></span></div><ul id=menu><li><a href=https://blog.nebrass.fr/ title=Posts><span>Posts</span></a></li><li><a href=https://blog.nebrass.fr/search/ title="Search (Alt + /)" accesskey=/><span>Search</span></a></li><li><a href=https://blog.nebrass.fr/categories/ title=Categories><span>Categories</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class=post-title>Playing with Reactive Spring Boot</h1><div class=post-meta><span title="2020-06-01 00:00:00 +0000 UTC">June 1, 2020</span>&nbsp;·&nbsp;8 min</div></header><figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/playing-spring-webflux-cover.webp alt></figure><div class=post-content><p>Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃  I was waiting for the landscape to be mature to made a one-shot tutorial 😁</p><p>Today, I will show you how to make a <strong>Reactive Spring Boot application</strong>, with a <strong>Reactive CRUDs</strong> using <strong>Spring Data Reactive Relational Database Connectivity (R2DBC)</strong> with <strong>PostgreSQL</strong> and for sure the famous <strong>Webflux</strong>. Don&rsquo;t be scared if you don&rsquo;t know any of these topics. We will be introducing all of them smoothly !  😊</p><p>But before digging into the practice, I will be making small story-telling about the fundamentals of the reactive programming. 😎</p><h2 id=lets-discover-the-reactive-programming>Let&rsquo;s discover the reactive programming<a hidden class=anchor aria-hidden=true href=#lets-discover-the-reactive-programming>#</a></h2><p>Reactive programming is development paradigm based around asynchronous data streams. I think this is the shortest complete definition.</p><p>In the reactive programming, data streams are the first class citizens. They can be events, messages, calls, and even failures that we can observe and we can react when a value is emitted. You subscribe to the event, and you will be notified when your event is fired. Moving to an events-driven style will make our application asynchronous and non blocking. Many frameworks and libraries are regularly appearing.. one of the most powerful projects is <strong>Reactor</strong>: a fourth-generation reactive library, based on the <a href=https://github.com/reactive-streams/reactive-streams-jvm>Reactive Streams</a> specification, for building non-blocking applications on the JVM. Reactor is created and maintained by the Spring Framework teams 💪😁</p><div align=center><p><img loading=lazy src=../images/reactor-150x150.webp alt="Reactor logo" title="Reactor logo">
-Reactor logo</p></div><h2 id=mastering-the-fundamentals-of-the-reactive-programming>Mastering the fundamentals of the reactive programming<a hidden class=anchor aria-hidden=true href=#mastering-the-fundamentals-of-the-reactive-programming>#</a></h2><p>I found a FREE wonderful interactive tutorial about <strong>Reactive programming with Reactor 3</strong>. I highly recommend that you take it before continuing this tutorial 😁 <a href=https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Intro>the link</a>.</p><div align=center><p><img loading=lazy src=../images/reactive-programming-with-reactor-1024x419.webp alt="Free tutorial - Reactive Programming with Reactor 3" title="Free tutorial - Reactive Programming with Reactor 3">
-Free tutorial - Reactive Programming with Reactor 3</p></div><h2 id=building-our-first-reactive-application>Building our First Reactive Application<a hidden class=anchor aria-hidden=true href=#building-our-first-reactive-application>#</a></h2><p><a href=https://github.com/nebrass/playing-with-reactive-spring-boot>The full source code is available on my Github.</a></p><p>We will generate our project using the <em><strong>Spring Initializr</strong></em>. Our application will have 6 dependencies:</p><ul><li>Spring Boot DevTools</li><li>Lombok</li><li>Spring Reactive Web</li><li>Spring Data R2DBC</li><li>PostgreSQL Driver</li><li>Flyway Migration</li></ul><div align=center><p><img loading=lazy src=../images/initializer-reactive-spring.webp alt="Generating the project skull on Spring Initializr" title="Generating the project skull on Spring Initializr">
-Generating the project skull on Spring Initializr</p></div><p>Before digging into the code, we need to have a PostgreSQL database 😅 I will be using a Dockerized DB. Just run this command to have a local PostgreSQL DB running into a Docker container :</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>Playing with Reactive Spring Boot | Nebrass Homepage</title>
+<meta name=keywords content>
+<meta name=description content="Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃 I was waiting for the landscape to be mature to made a one-shot tutorial 😁
+Today, I will show you how to make a Reactive Spring Boot application, with a Reactive CRUDs using Spring Data Reactive Relational Database Connectivity (R2DBC) with PostgreSQL and for sure the famous Webflux.">
+<meta name=author content>
+<link rel=canonical href=https://blog.nebrass.fr/playing-with-reactive-spring-boot/>
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.9aeab43847eb11aca320bfadedfe191ed6516dd768bf1314b534c4992aac901a.css integrity="sha256-muq0OEfrEayjIL+t7f4ZHtZRbddovxMUtTTEmSqskBo=" rel="preload stylesheet" as=style>
+<script src=/js/prism.min.js></script>
+<link rel=stylesheet href=/css/prism.min.css>
+<link rel=icon href=https://blog.nebrass.fr/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://blog.nebrass.fr/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://blog.nebrass.fr/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://blog.nebrass.fr/apple-touch-icon.png>
+<link rel=mask-icon href=https://blog.nebrass.fr/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<style amp-custom>.main,.footer,.nav{max-width:calc(var(--main-width) + var(--gap) * 15)}</style>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-111781986-1','auto'),ga('send','pageview'))</script><meta property="og:title" content="Playing with Reactive Spring Boot">
+<meta property="og:description" content="Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃 I was waiting for the landscape to be mature to made a one-shot tutorial 😁
+Today, I will show you how to make a Reactive Spring Boot application, with a Reactive CRUDs using Spring Data Reactive Relational Database Connectivity (R2DBC) with PostgreSQL and for sure the famous Webflux.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.nebrass.fr/playing-with-reactive-spring-boot/">
+<meta property="og:image" content="https://blog.nebrass.fr/images/playing-spring-webflux-cover.webp"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2020-06-01T00:00:00+00:00">
+<meta property="article:modified_time" content="2020-06-01T00:00:00+00:00">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://blog.nebrass.fr/images/playing-spring-webflux-cover.webp">
+<meta name=twitter:title content="Playing with Reactive Spring Boot">
+<meta name=twitter:description content="Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃 I was waiting for the landscape to be mature to made a one-shot tutorial 😁
+Today, I will show you how to make a Reactive Spring Boot application, with a Reactive CRUDs using Spring Data Reactive Relational Database Connectivity (R2DBC) with PostgreSQL and for sure the famous Webflux.">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"https://blog.nebrass.fr/posts/"},{"@type":"ListItem","position":3,"name":"Playing with Reactive Spring Boot","item":"https://blog.nebrass.fr/playing-with-reactive-spring-boot/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Playing with Reactive Spring Boot","name":"Playing with Reactive Spring Boot","description":"Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃 I was waiting for the landscape to be mature to made a one-shot tutorial 😁\nToday, I will show you how to make a Reactive Spring Boot application, with a Reactive CRUDs using Spring Data Reactive Relational Database Connectivity (R2DBC) with PostgreSQL and for sure the famous Webflux.","keywords":[],"articleBody":"Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃 I was waiting for the landscape to be mature to made a one-shot tutorial 😁\nToday, I will show you how to make a Reactive Spring Boot application, with a Reactive CRUDs using Spring Data Reactive Relational Database Connectivity (R2DBC) with PostgreSQL and for sure the famous Webflux. Don’t be scared if you don’t know any of these topics. We will be introducing all of them smoothly ! 😊\nBut before digging into the practice, I will be making small story-telling about the fundamentals of the reactive programming. 😎\nLet’s discover the reactive programming Reactive programming is development paradigm based around asynchronous data streams. I think this is the shortest complete definition.\nIn the reactive programming, data streams are the first class citizens. They can be events, messages, calls, and even failures that we can observe and we can react when a value is emitted. You subscribe to the event, and you will be notified when your event is fired. Moving to an events-driven style will make our application asynchronous and non blocking. Many frameworks and libraries are regularly appearing.. one of the most powerful projects is Reactor: a fourth-generation reactive library, based on the Reactive Streams specification, for building non-blocking applications on the JVM. Reactor is created and maintained by the Spring Framework teams 💪😁\nReactor logo\n Mastering the fundamentals of the reactive programming I found a FREE wonderful interactive tutorial about Reactive programming with Reactor 3. I highly recommend that you take it before continuing this tutorial 😁 the link.\nFree tutorial - Reactive Programming with Reactor 3\n Building our First Reactive Application The full source code is available on my Github.\nWe will generate our project using the Spring Initializr. Our application will have 6 dependencies:\n Spring Boot DevTools Lombok Spring Reactive Web Spring Data R2DBC PostgreSQL Driver Flyway Migration  Generating the project skull on Spring Initializr\n Before digging into the code, we need to have a PostgreSQL database 😅 I will be using a Dockerized DB. Just run this command to have a local PostgreSQL DB running into a Docker container :\n1 2 3 4  $ docker run -d --name demo-postgres \\  -e POSTGRES_USER=developer -e POSTGRES_PASSWORD=p4SSW0rd \\  -e POSTGRES_DB=demo \\  -p 5432:5432 postgres:latest   Good ! Now we can start working on my code. We will be developing a Reactive Books CRUD application.\nFirst of all we need to create the Model class which will be used to map the table structure, which is the equivalent to an Entity in JPA.\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  @Data @Table(\"book\") public class Book { @Id private Long id; private String title; private String isbn; private String author; private BigDecimal price; public Book(String title, String isbn, String author, BigDecimal price) { this.title = title; this.isbn = isbn; this.author = author; this.price = price; } }   Next, we will create a Reactive Repository to manage our Books in our DB:\n1 2 3  @Repository public interface BookRepository extends ReactiveCrudRepositoryBook, Long { }   As you see here, we are not extending from a JpaRepository like in the classic Spring Data. But we are extending from the ReactiveCrudRepository interface from the Spring Data Reactive Relational Database Connectivity (R2DBC) library.\nWe can even create a custom method in our Repository using the Spring Data Pattern. For example I will need a findBy method using an Author name and I want that the request ignore the case and it will return a Reactive Stream of 0-N Books:\n1  FluxBook findBooksByAuthorContainingIgnoreCase(String author);   Next, we will create a Spring Service class that will be a glue layer between the Repository and the RestController, and where business logic will be living.\nOur typical Service will look like:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33  @Service @RequiredArgsConstructor public class BookService { private final BookRepository bookRepository; public FluxBook findAll() { return bookRepository.findAll(); } public MonoBook findById(Long id) { return bookRepository.findById(id); } public MonoBook save(BookDTO book) { return bookRepository.save( new Book( book.getTitle(), book.getIsbn(), book.getAuthor(), book.getPrice() ) ).subscribe(); } public FluxBook findByAuthor(String author) { return bookRepository.findBooksByAuthorContainingIgnoreCase(author); } public void deleteById(Long id) { bookRepository.deleteById(id).subscribe(); } }   As you see, we have findAll() method from the Repository that is used to grab “reactively” all the records from the DB, this why it’s return type is a Flux and not our classic List. But what is a Flux ? A Flux is an Asynchronous Sequence of 0-N Items. Good ! The same way, I think you already saw the Mono, which is an Asynchronous 0-1 Result, which’s somehow like the Optional Java 8 object.\nAs you see in the save() and deleteById() methods, we are calling subscribe(). This is always done with a reactive streams, because for many actions, we need to have a subscriber for an operation to be done.\nNow, we need to create our RestController:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33  @RestController @RequestMapping(\"/books\") @RequiredArgsConstructor public class BookRestController { private final BookService bookService; @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE) public FluxBook list() { return bookService.findAll(); } @GetMapping(\"/{id}\") public MonoBook findById(@PathVariable Long id) { return bookService.findById(id); } @PostMapping @ResponseStatus(HttpStatus.CREATED) public MonoBook create(@RequestBody BookDTO bookDTO) { return bookService.save(bookDTO); } @GetMapping(\"/author\") public FluxBook findByAuthor(@RequestParam String name) { return bookService.findByAuthor(name); } @DeleteMapping(\"/{id}\") public void deleteById(@PathVariable Long id) { bookService.deleteById(id); } }   We have introduced a BookDTO class that will be a wrapping the records sent/received while interacting with the REST consumers:\n1 2 3 4 5 6 7  @Data public class BookDTO { private String title; private String isbn; private String author; private BigDecimal price; }   Now, before running our code, we need to configure PostgreSQL for R2DBC:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29  @Configuration @EnableR2dbcRepositories public class PostgresConfiguration extends AbstractR2dbcConfiguration { @Value(\"${spring.r2dbc.url}\") private String url; @Value(\"${spring.r2dbc.username}\") private String username; @Value(\"${spring.r2dbc.password}\") private String password; @Bean @Override public ConnectionFactory connectionFactory() { return new PostgresqlConnectionFactory( PostgresqlConnectionConfiguration.builder() .host(JdbcParser.getJdbcHost(url)) .port(JdbcParser.getJdbcPort(url)) .username(username) .password(password) .database(JdbcParser.getDbName(url)) .build()); } @Bean ReactiveTransactionManager transactionManager(ConnectionFactory connectionFactory) { return new R2dbcTransactionManager(connectionFactory); } }   Our application.properties file needs to have our DB credentials:\n1 2 3  spring.r2dbc.url=jdbc:postgresql://localhost:5432/demo spring.r2dbc.username=developer spring.r2dbc.password=p4SSW0rd   The JdbcParser utility class looks like:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19  public class JdbcParser { public static String getJdbcHost(String jdbc) { return getUri(jdbc).getHost(); } public static int getJdbcPort(String jdbc) { return getUri(jdbc).getPort(); } public static String getDbName(String jdbc) { return getUri(jdbc).getPath().substring(1); } private static URI getUri(String jdbc) { String substring = jdbc.substring(5); return URI.create(substring); } }   I already added Flyway to my Spring Boot dependencies. I will now configure the Flyway execution on startup using a CommandRunner:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18  @Component public class FlywayConfiguration implements CommandLineRunner { @Value(\"${spring.r2dbc.url}\") private String url; @Value(\"${spring.r2dbc.username}\") private String username; @Value(\"${spring.r2dbc.password}\") private String password; @Override public void run(String... args) { Flyway.configure() .dataSource(url, username, password) .load() .migrate(); } }   I just did this to avoid retyping PostgreSQL credentials under the spring.r2dbc.* and flyway.*\nGood ! Now we need to have the V1_0__init.sql script in the src/main/resources/db/migration folder, where Flyway is seeking SQL scripts. This initialization script will create the tables and insert some sample data:\n1 2 3 4 5 6 7 8 9 10 11 12  CREATETABLEbook(idSERIALNOTNULLPRIMARYKEY,titleVARCHAR(100),isbnVARCHAR(20),authorVARCHAR(100),priceNUMERIC(6,2));INSERTINTObook(title,isbn,author,price)values('Pairing Apache Shiro and Java EE 7','9781365124044','Nebrass Lamouchi',0);INSERTINTObook(title,isbn,author,price)values('Playing with Java Microservices on Kubernetes and OpenShift','9782956428510','Nebrass Lamouchi',9.18);  Now, let’s run the application and request the findAll() REST API:\n1 2 3 4 5 6 7 8 9  http http://localhost:8080/books HTTP/1.1 200 OK Content-Type: text/event-stream;charset=UTF-8 transfer-encoding: chunked data:{\"id\":1,\"title\":\"Pairing Apache Shiro and Java EE 7\",\"isbn\":\"9781365124044\",\"author\":\"Nebrass Lamouchi\",\"price\":0.00} data:{\"id\":2,\"title\":\"Playing with Java Microservices on Kubernetes and OpenShift\",\"isbn\":\"9782956428510\",\"author\":\"Nebrass Lamouchi\",\"price\":9.18}   Now, we will add the Swagger support to our application. First of all we need to add the SpringFox Swagger 3.0-Snapshot dependencies, as the final version is not yet released:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15   io.springfox springfox-swagger2 3.0.0-SNAPSHOT   io.springfox springfox-spring-webflux 3.0.0-SNAPSHOT   io.springfox springfox-swagger-ui 3.0.0-SNAPSHOT    These dependencies are not available on the Maven Central repository, but in JFrog OSS Snapshot repository. We need just to add it to you pom.xml:\n1 2 3 4 5 6 7    jcenter-snapshots jcenter http://oss.jfrog.org/artifactory/oss-snapshot-local/     Now, we need to configure Swagger in our application:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29  @Configuration @EnableSwagger2WebFlux public class SwaggerConfiguration { @Bean RouterFunctionServerResponse swaggerRouterFunction() { MonoServerResponse build = ServerResponse.temporaryRedirect(URI.create(\"swagger-ui.html\")).build(); return RouterFunctions.route(RequestPredicates.GET(\"/swagger\"), request - build); } @Bean public Docket api() { return new Docket(DocumentationType.SWAGGER_2) .apiInfo(apiInfo()) .select() .apis(RequestHandlerSelectors.any()) .paths(PathSelectors.any()) .build(); } private ApiInfo apiInfo() { return new ApiInfoBuilder() .title(\"Playing with Spring Webflux\") .description(\"Sample application for my blog post 'Playing with Reactive Spring Boot'\") .contact(new Contact(\"Nebrass Lamouchi\", \"https://blog.nebrass.fr\", \"lnibrass@gmail.com\")) .version(\"1.0\") .build(); } }   There is some new stuff here. Keep calm 👻 we will cover everything:\n The @EnableSwagger2Webflux annotation Indicates that Swagger support for Webflux should be enabled. The swaggerRouterFunction() method is used to define a RouterFunction for the Swagger UI ressources. A RouterFunction represents a function that routes an HTTP request to a Handling Function that will be dealing with that request.  Good ! Now our application has Swagger enabled. Just run the application and visit the http://localhost:8080/swagger-ui.html:\nSwagger UI\n Good 😊 We made our first Spring WebFlux application ! You can now dig more into the Reactive Programming style and you can for example try to create some Websockets to stream some of your data reactively from a REST API and a Websocket 🤩\nIf you have questions, please feel free to get in touch with me 😎\n","wordCount":"1700","inLanguage":"en","image":"https://blog.nebrass.fr/images/playing-spring-webflux-cover.webp","datePublished":"2020-06-01T00:00:00Z","dateModified":"2020-06-01T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.nebrass.fr/playing-with-reactive-spring-boot/"},"publisher":{"@type":"Organization","name":"Nebrass Homepage","logo":{"@type":"ImageObject","url":"https://blog.nebrass.fr/favicon.ico"}}}</script>
+</head>
+<body id=top>
+<script>window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
+<header class=header>
+<nav class=nav>
+<div class=logo>
+<a href=https://blog.nebrass.fr accesskey=h title="Nebrass Homepage (Alt + H)">Nebrass Homepage</a>
+<span class=logo-switches>
+</span>
+</div>
+<ul id=menu>
+<li>
+<a href=https://blog.nebrass.fr/ title=Posts>
+<span>Posts</span>
+</a>
+</li>
+<li>
+<a href=https://blog.nebrass.fr/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
+<li>
+<a href=https://blog.nebrass.fr/categories/ title=Categories>
+<span>Categories</span>
+</a>
+</li>
+</ul>
+</nav>
+</header>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<h1 class=post-title>
+Playing with Reactive Spring Boot
+</h1>
+<div class=post-meta><span title="2020-06-01 00:00:00 +0000 UTC">June 1, 2020</span>&nbsp;·&nbsp;8 min
+</div>
+</header>
+<figure class=entry-cover><img loading=lazy src=https://blog.nebrass.fr/images/playing-spring-webflux-cover.webp alt>
+</figure>
+<div class=post-content><p>Reactive programming ! Wow ! What a fancy buzzy word ! I waited so much to write a blog post about this trend 😃  I was waiting for the landscape to be mature to made a one-shot tutorial 😁</p>
+<p>Today, I will show you how to make a <strong>Reactive Spring Boot application</strong>, with a <strong>Reactive CRUDs</strong> using <strong>Spring Data Reactive Relational Database Connectivity (R2DBC)</strong> with <strong>PostgreSQL</strong> and for sure the famous <strong>Webflux</strong>. Don&rsquo;t be scared if you don&rsquo;t know any of these topics. We will be introducing all of them smoothly !  😊</p>
+<p>But before digging into the practice, I will be making small story-telling about the fundamentals of the reactive programming. 😎</p>
+<h2 id=lets-discover-the-reactive-programming>Let&rsquo;s discover the reactive programming<a hidden class=anchor aria-hidden=true href=#lets-discover-the-reactive-programming>#</a></h2>
+<p>Reactive programming is development paradigm based around asynchronous data streams. I think this is the shortest complete definition.</p>
+<p>In the reactive programming, data streams are the first class citizens. They can be events, messages, calls, and even failures that we can observe and we can react when a value is emitted. You subscribe to the event, and you will be notified when your event is fired. Moving to an events-driven style will make our application asynchronous and non blocking. Many frameworks and libraries are regularly appearing.. one of the most powerful projects is <strong>Reactor</strong>: a fourth-generation reactive library, based on the <a href=https://github.com/reactive-streams/reactive-streams-jvm>Reactive Streams</a> specification, for building non-blocking applications on the JVM. Reactor is created and maintained by the Spring Framework teams 💪😁</p>
+<div align=center>
+<p><img loading=lazy src=../images/reactor-150x150.webp alt="Reactor logo" title="Reactor logo">
+Reactor logo</p>
+</div>
+<h2 id=mastering-the-fundamentals-of-the-reactive-programming>Mastering the fundamentals of the reactive programming<a hidden class=anchor aria-hidden=true href=#mastering-the-fundamentals-of-the-reactive-programming>#</a></h2>
+<p>I found a FREE wonderful interactive tutorial about <strong>Reactive programming with Reactor 3</strong>. I highly recommend that you take it before continuing this tutorial 😁 <a href=https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Intro>the link</a>.</p>
+<div align=center>
+<p><img loading=lazy src=../images/reactive-programming-with-reactor-1024x419.webp alt="Free tutorial - Reactive Programming with Reactor 3" title="Free tutorial - Reactive Programming with Reactor 3">
+Free tutorial - Reactive Programming with Reactor 3</p>
+</div>
+<h2 id=building-our-first-reactive-application>Building our First Reactive Application<a hidden class=anchor aria-hidden=true href=#building-our-first-reactive-application>#</a></h2>
+<p><a href=https://github.com/nebrass/playing-with-reactive-spring-boot>The full source code is available on my Github.</a></p>
+<p>We will generate our project using the <em><strong>Spring Initializr</strong></em>. Our application will have 6 dependencies:</p>
+<ul>
+<li>Spring Boot DevTools</li>
+<li>Lombok</li>
+<li>Spring Reactive Web</li>
+<li>Spring Data R2DBC</li>
+<li>PostgreSQL Driver</li>
+<li>Flyway Migration</li>
+</ul>
+<div align=center>
+<p><img loading=lazy src=../images/initializer-reactive-spring.webp alt="Generating the project skull on Spring Initializr" title="Generating the project skull on Spring Initializr">
+Generating the project skull on Spring Initializr</p>
+</div>
+<p>Before digging into the code, we need to have a PostgreSQL database 😅 I will be using a Dockerized DB. Just run this command to have a local PostgreSQL DB running into a Docker container :</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ docker run -d --name demo-postgres <span class=se>\
-</span></span></span><span class=line><span class=cl><span class=se></span>    -e <span class=nv>POSTGRES_USER</span><span class=o>=</span>developer -e <span class=nv>POSTGRES_PASSWORD</span><span class=o>=</span>p4SSW0rd <span class=se>\
-</span></span></span><span class=line><span class=cl><span class=se></span>    -e <span class=nv>POSTGRES_DB</span><span class=o>=</span>demo <span class=se>\
-</span></span></span><span class=line><span class=cl><span class=se></span>    -p 5432:5432 postgres:latest
-</span></span></code></pre></td></tr></table></div></div><p>Good ! Now we can start working on my code. We will be developing a Reactive Books CRUD application.</p><p>First of all we need to create the Model class which will be used to map the table structure, which is the equivalent to an Entity in JPA.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ docker run -d --name demo-postgres <span class=se>\
+</span><span class=se></span>    -e <span class=nv>POSTGRES_USER</span><span class=o>=</span>developer -e <span class=nv>POSTGRES_PASSWORD</span><span class=o>=</span>p4SSW0rd <span class=se>\
+</span><span class=se></span>    -e <span class=nv>POSTGRES_DB</span><span class=o>=</span>demo <span class=se>\
+</span><span class=se></span>    -p 5432:5432 postgres:latest
+</code></pre></td></tr></table>
+</div>
+</div><p>Good ! Now we can start working on my code. We will be developing a Reactive Books CRUD application.</p>
+<p>First of all we need to create the Model class which will be used to map the table structure, which is the equivalent to an Entity in JPA.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -31,32 +146,55 @@ Generating the project skull on Spring Initializr</p></div><p>Before digging int
 </span><span class=lnt>15
 </span><span class=lnt>16
 </span><span class=lnt>17
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Data</span>
-</span></span><span class=line><span class=cl><span class=nd>@Table</span><span class=o>(</span><span class=s>&#34;book&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>Book</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=nd>@Id</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>Long</span> <span class=n>id</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>title</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>isbn</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>author</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>BigDecimal</span> <span class=n>price</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=nf>Book</span><span class=o>(</span><span class=n>String</span> <span class=n>title</span><span class=o>,</span> <span class=n>String</span> <span class=n>isbn</span><span class=o>,</span> <span class=n>String</span> <span class=n>author</span><span class=o>,</span> <span class=n>BigDecimal</span> <span class=n>price</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>this</span><span class=o>.</span><span class=na>title</span> <span class=o>=</span> <span class=n>title</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>        <span class=k>this</span><span class=o>.</span><span class=na>isbn</span> <span class=o>=</span> <span class=n>isbn</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>        <span class=k>this</span><span class=o>.</span><span class=na>author</span> <span class=o>=</span> <span class=n>author</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>        <span class=k>this</span><span class=o>.</span><span class=na>price</span> <span class=o>=</span> <span class=n>price</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>Next, we will create a Reactive Repository to manage our Books in our DB:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Data</span>
+<span class=nd>@Table</span><span class=o>(</span><span class=s>&#34;book&#34;</span><span class=o>)</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>Book</span> <span class=o>{</span>
+    <span class=nd>@Id</span>
+    <span class=kd>private</span> <span class=n>Long</span> <span class=n>id</span><span class=o>;</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>title</span><span class=o>;</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>isbn</span><span class=o>;</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>author</span><span class=o>;</span>
+    <span class=kd>private</span> <span class=n>BigDecimal</span> <span class=n>price</span><span class=o>;</span>
+
+    <span class=kd>public</span> <span class=nf>Book</span><span class=o>(</span><span class=n>String</span> <span class=n>title</span><span class=o>,</span> <span class=n>String</span> <span class=n>isbn</span><span class=o>,</span> <span class=n>String</span> <span class=n>author</span><span class=o>,</span> <span class=n>BigDecimal</span> <span class=n>price</span><span class=o>)</span> <span class=o>{</span>
+        <span class=k>this</span><span class=o>.</span><span class=na>title</span> <span class=o>=</span> <span class=n>title</span><span class=o>;</span>
+        <span class=k>this</span><span class=o>.</span><span class=na>isbn</span> <span class=o>=</span> <span class=n>isbn</span><span class=o>;</span>
+        <span class=k>this</span><span class=o>.</span><span class=na>author</span> <span class=o>=</span> <span class=n>author</span><span class=o>;</span>
+        <span class=k>this</span><span class=o>.</span><span class=na>price</span> <span class=o>=</span> <span class=n>price</span><span class=o>;</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Next, we will create a Reactive Repository to manage our Books in our DB:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Repository</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>interface</span> <span class=nc>BookRepository</span> <span class=kd>extends</span> <span class=n>ReactiveCrudRepository</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>,</span> <span class=n>Long</span><span class=o>&gt;</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>As you see here, we are not extending from a <code>JpaRepository</code> like in the classic <strong>Spring Data</strong>. But we are extending from the <code>ReactiveCrudRepository</code> interface from the <strong>Spring Data Reactive Relational Database Connectivity (R2DBC)</strong> library.</p><p>We can even create a custom method in our <code>Repository</code> using the <strong>Spring Data Pattern</strong>. For example I will need a <code>findBy</code> method using an <code>Author</code> name and I want that the request ignore the case and it will return a <strong>Reactive Stream of 0-N Books</strong>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=n>Flux</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>findBooksByAuthorContainingIgnoreCase</span><span class=o>(</span><span class=n>String</span> <span class=n>author</span><span class=o>);</span>
-</span></span></code></pre></td></tr></table></div></div><p>Next, we will create a <code>Spring Service</code> class that will be a glue layer between the <code>Repository</code> and the <code>RestController</code>, and where business logic will be living.</p><p>Our typical <code>Service</code> will look like:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Repository</span>
+<span class=kd>public</span> <span class=kd>interface</span> <span class=nc>BookRepository</span> <span class=kd>extends</span> <span class=n>ReactiveCrudRepository</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>,</span> <span class=n>Long</span><span class=o>&gt;</span> <span class=o>{</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>As you see here, we are not extending from a <code>JpaRepository</code> like in the classic <strong>Spring Data</strong>. But we are extending from the <code>ReactiveCrudRepository</code> interface from the <strong>Spring Data Reactive Relational Database Connectivity (R2DBC)</strong> library.</p>
+<p>We can even create a custom method in our <code>Repository</code> using the <strong>Spring Data Pattern</strong>. For example I will need a <code>findBy</code> method using an <code>Author</code> name and I want that the request ignore the case and it will return a <strong>Reactive Stream of 0-N Books</strong>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=n>Flux</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>findBooksByAuthorContainingIgnoreCase</span><span class=o>(</span><span class=n>String</span> <span class=n>author</span><span class=o>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Next, we will create a <code>Spring Service</code> class that will be a glue layer between the <code>Repository</code> and the <code>RestController</code>, and where business logic will be living.</p>
+<p>Our typical <code>Service</code> will look like:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -89,40 +227,49 @@ Generating the project skull on Spring Initializr</p></div><p>Before digging int
 </span><span class=lnt>31
 </span><span class=lnt>32
 </span><span class=lnt>33
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Service</span>
-</span></span><span class=line><span class=cl><span class=nd>@RequiredArgsConstructor</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>BookService</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kd>final</span> <span class=n>BookRepository</span> <span class=n>bookRepository</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Flux</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>findAll</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>bookRepository</span><span class=o>.</span><span class=na>findAll</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Mono</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>findById</span><span class=o>(</span><span class=n>Long</span> <span class=n>id</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>bookRepository</span><span class=o>.</span><span class=na>findById</span><span class=o>(</span><span class=n>id</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Mono</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>save</span><span class=o>(</span><span class=n>BookDTO</span> <span class=n>book</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>bookRepository</span><span class=o>.</span><span class=na>save</span><span class=o>(</span>
-</span></span><span class=line><span class=cl>                <span class=k>new</span> <span class=n>Book</span><span class=o>(</span>
-</span></span><span class=line><span class=cl>                        <span class=n>book</span><span class=o>.</span><span class=na>getTitle</span><span class=o>(),</span>
-</span></span><span class=line><span class=cl>                        <span class=n>book</span><span class=o>.</span><span class=na>getIsbn</span><span class=o>(),</span>
-</span></span><span class=line><span class=cl>                        <span class=n>book</span><span class=o>.</span><span class=na>getAuthor</span><span class=o>(),</span>
-</span></span><span class=line><span class=cl>                        <span class=n>book</span><span class=o>.</span><span class=na>getPrice</span><span class=o>()</span>
-</span></span><span class=line><span class=cl>                <span class=o>)</span>
-</span></span><span class=line><span class=cl>        <span class=o>).</span><span class=na>subscribe</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Flux</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>findByAuthor</span><span class=o>(</span><span class=n>String</span> <span class=n>author</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>bookRepository</span><span class=o>.</span><span class=na>findBooksByAuthorContainingIgnoreCase</span><span class=o>(</span><span class=n>author</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>deleteById</span><span class=o>(</span><span class=n>Long</span> <span class=n>id</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>bookRepository</span><span class=o>.</span><span class=na>deleteById</span><span class=o>(</span><span class=n>id</span><span class=o>).</span><span class=na>subscribe</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>As you see, we have <code>findAll()</code> method from the <code>Repository</code> that is used to grab &ldquo;<strong>reactively</strong>&rdquo; all the records from the DB, this why it&rsquo;s return type is a <code>Flux&lt;Book></code> and not our classic <code>List&lt;Book></code>. But what is a <code>Flux</code> ? A <strong>Flux is an Asynchronous Sequence of 0-N Items</strong>. Good ! The same way, I think you already saw the <strong>Mono, which is an Asynchronous 0-1 Result</strong>, which&rsquo;s somehow like the <code>Optional</code> Java 8 object.</p><p>As you see in the <code>save()</code> and <code>deleteById()</code> methods, we are calling <code>subscribe()</code>. This is always done with a reactive streams, because for many actions, we need to have a subscriber for an operation to be done.</p><p>Now, we need to create our <code>RestController</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Service</span>
+<span class=nd>@RequiredArgsConstructor</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>BookService</span> <span class=o>{</span>
+
+    <span class=kd>private</span> <span class=kd>final</span> <span class=n>BookRepository</span> <span class=n>bookRepository</span><span class=o>;</span>
+
+    <span class=kd>public</span> <span class=n>Flux</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>findAll</span><span class=o>()</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=n>bookRepository</span><span class=o>.</span><span class=na>findAll</span><span class=o>();</span>
+    <span class=o>}</span>
+
+    <span class=kd>public</span> <span class=n>Mono</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>findById</span><span class=o>(</span><span class=n>Long</span> <span class=n>id</span><span class=o>)</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=n>bookRepository</span><span class=o>.</span><span class=na>findById</span><span class=o>(</span><span class=n>id</span><span class=o>);</span>
+    <span class=o>}</span>
+
+    <span class=kd>public</span> <span class=n>Mono</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>save</span><span class=o>(</span><span class=n>BookDTO</span> <span class=n>book</span><span class=o>)</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=n>bookRepository</span><span class=o>.</span><span class=na>save</span><span class=o>(</span>
+                <span class=k>new</span> <span class=n>Book</span><span class=o>(</span>
+                        <span class=n>book</span><span class=o>.</span><span class=na>getTitle</span><span class=o>(),</span>
+                        <span class=n>book</span><span class=o>.</span><span class=na>getIsbn</span><span class=o>(),</span>
+                        <span class=n>book</span><span class=o>.</span><span class=na>getAuthor</span><span class=o>(),</span>
+                        <span class=n>book</span><span class=o>.</span><span class=na>getPrice</span><span class=o>()</span>
+                <span class=o>)</span>
+        <span class=o>).</span><span class=na>subscribe</span><span class=o>();</span>
+    <span class=o>}</span>
+    
+    <span class=kd>public</span> <span class=n>Flux</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>findByAuthor</span><span class=o>(</span><span class=n>String</span> <span class=n>author</span><span class=o>)</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=n>bookRepository</span><span class=o>.</span><span class=na>findBooksByAuthorContainingIgnoreCase</span><span class=o>(</span><span class=n>author</span><span class=o>);</span>
+    <span class=o>}</span>
+
+    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>deleteById</span><span class=o>(</span><span class=n>Long</span> <span class=n>id</span><span class=o>)</span> <span class=o>{</span>
+        <span class=n>bookRepository</span><span class=o>.</span><span class=na>deleteById</span><span class=o>(</span><span class=n>id</span><span class=o>).</span><span class=na>subscribe</span><span class=o>();</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>As you see, we have <code>findAll()</code> method from the <code>Repository</code> that is used to grab &ldquo;<strong>reactively</strong>&rdquo; all the records from the DB, this why it&rsquo;s return type is a <code>Flux&lt;Book></code> and not our classic <code>List&lt;Book></code>. But what is a <code>Flux</code> ? A <strong>Flux is an Asynchronous Sequence of 0-N Items</strong>. Good ! The same way, I think you already saw the <strong>Mono, which is an Asynchronous 0-1 Result</strong>, which&rsquo;s somehow like the <code>Optional</code> Java 8 object.</p>
+<p>As you see in the <code>save()</code> and <code>deleteById()</code> methods, we are calling <code>subscribe()</code>. This is always done with a reactive streams, because for many actions, we need to have a subscriber for an operation to be done.</p>
+<p>Now, we need to create our <code>RestController</code>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -155,54 +302,68 @@ Generating the project skull on Spring Initializr</p></div><p>Before digging int
 </span><span class=lnt>31
 </span><span class=lnt>32
 </span><span class=lnt>33
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@RestController</span>
-</span></span><span class=line><span class=cl><span class=nd>@RequestMapping</span><span class=o>(</span><span class=s>&#34;/books&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl><span class=nd>@RequiredArgsConstructor</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>BookRestController</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kd>final</span> <span class=n>BookService</span> <span class=n>bookService</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@GetMapping</span><span class=o>(</span><span class=n>produces</span> <span class=o>=</span> <span class=n>MediaType</span><span class=o>.</span><span class=na>TEXT_EVENT_STREAM_VALUE</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Flux</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>list</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>bookService</span><span class=o>.</span><span class=na>findAll</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@GetMapping</span><span class=o>(</span><span class=s>&#34;/{id}&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Mono</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>findById</span><span class=o>(</span><span class=nd>@PathVariable</span> <span class=n>Long</span> <span class=n>id</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>bookService</span><span class=o>.</span><span class=na>findById</span><span class=o>(</span><span class=n>id</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@PostMapping</span>
-</span></span><span class=line><span class=cl>    <span class=nd>@ResponseStatus</span><span class=o>(</span><span class=n>HttpStatus</span><span class=o>.</span><span class=na>CREATED</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Mono</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>create</span><span class=o>(</span><span class=nd>@RequestBody</span> <span class=n>BookDTO</span> <span class=n>bookDTO</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>bookService</span><span class=o>.</span><span class=na>save</span><span class=o>(</span><span class=n>bookDTO</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>    
-</span></span><span class=line><span class=cl>    <span class=nd>@GetMapping</span><span class=o>(</span><span class=s>&#34;/author&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Flux</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>findByAuthor</span><span class=o>(</span><span class=nd>@RequestParam</span> <span class=n>String</span> <span class=n>name</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>bookService</span><span class=o>.</span><span class=na>findByAuthor</span><span class=o>(</span><span class=n>name</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@DeleteMapping</span><span class=o>(</span><span class=s>&#34;/{id}&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>deleteById</span><span class=o>(</span><span class=nd>@PathVariable</span> <span class=n>Long</span> <span class=n>id</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>bookService</span><span class=o>.</span><span class=na>deleteById</span><span class=o>(</span><span class=n>id</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>We have introduced a <code>BookDTO</code> class that will be a wrapping the records sent/received while interacting with the REST consumers:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@RestController</span>
+<span class=nd>@RequestMapping</span><span class=o>(</span><span class=s>&#34;/books&#34;</span><span class=o>)</span>
+<span class=nd>@RequiredArgsConstructor</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>BookRestController</span> <span class=o>{</span>
+
+    <span class=kd>private</span> <span class=kd>final</span> <span class=n>BookService</span> <span class=n>bookService</span><span class=o>;</span>
+
+    <span class=nd>@GetMapping</span><span class=o>(</span><span class=n>produces</span> <span class=o>=</span> <span class=n>MediaType</span><span class=o>.</span><span class=na>TEXT_EVENT_STREAM_VALUE</span><span class=o>)</span>
+    <span class=kd>public</span> <span class=n>Flux</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>list</span><span class=o>()</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=n>bookService</span><span class=o>.</span><span class=na>findAll</span><span class=o>();</span>
+    <span class=o>}</span>
+
+    <span class=nd>@GetMapping</span><span class=o>(</span><span class=s>&#34;/{id}&#34;</span><span class=o>)</span>
+    <span class=kd>public</span> <span class=n>Mono</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>findById</span><span class=o>(</span><span class=nd>@PathVariable</span> <span class=n>Long</span> <span class=n>id</span><span class=o>)</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=n>bookService</span><span class=o>.</span><span class=na>findById</span><span class=o>(</span><span class=n>id</span><span class=o>);</span>
+    <span class=o>}</span>
+
+    <span class=nd>@PostMapping</span>
+    <span class=nd>@ResponseStatus</span><span class=o>(</span><span class=n>HttpStatus</span><span class=o>.</span><span class=na>CREATED</span><span class=o>)</span>
+    <span class=kd>public</span> <span class=n>Mono</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>create</span><span class=o>(</span><span class=nd>@RequestBody</span> <span class=n>BookDTO</span> <span class=n>bookDTO</span><span class=o>)</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=n>bookService</span><span class=o>.</span><span class=na>save</span><span class=o>(</span><span class=n>bookDTO</span><span class=o>);</span>
+    <span class=o>}</span>
+    
+    <span class=nd>@GetMapping</span><span class=o>(</span><span class=s>&#34;/author&#34;</span><span class=o>)</span>
+    <span class=kd>public</span> <span class=n>Flux</span><span class=o>&lt;</span><span class=n>Book</span><span class=o>&gt;</span> <span class=nf>findByAuthor</span><span class=o>(</span><span class=nd>@RequestParam</span> <span class=n>String</span> <span class=n>name</span><span class=o>)</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=n>bookService</span><span class=o>.</span><span class=na>findByAuthor</span><span class=o>(</span><span class=n>name</span><span class=o>);</span>
+    <span class=o>}</span>
+
+    <span class=nd>@DeleteMapping</span><span class=o>(</span><span class=s>&#34;/{id}&#34;</span><span class=o>)</span>
+    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>deleteById</span><span class=o>(</span><span class=nd>@PathVariable</span> <span class=n>Long</span> <span class=n>id</span><span class=o>)</span> <span class=o>{</span>
+        <span class=n>bookService</span><span class=o>.</span><span class=na>deleteById</span><span class=o>(</span><span class=n>id</span><span class=o>);</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>We have introduced a <code>BookDTO</code> class that will be a wrapping the records sent/received while interacting with the REST consumers:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Data</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>BookDTO</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>title</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>isbn</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>author</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>BigDecimal</span> <span class=n>price</span><span class=o>;</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>Now, before running our code, we need to configure <strong>PostgreSQL</strong> for <strong>R2DBC</strong>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Data</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>BookDTO</span> <span class=o>{</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>title</span><span class=o>;</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>isbn</span><span class=o>;</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>author</span><span class=o>;</span>
+    <span class=kd>private</span> <span class=n>BigDecimal</span> <span class=n>price</span><span class=o>;</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Now, before running our code, we need to configure <strong>PostgreSQL</strong> for <strong>R2DBC</strong>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -231,42 +392,56 @@ Generating the project skull on Spring Initializr</p></div><p>Before digging int
 </span><span class=lnt>27
 </span><span class=lnt>28
 </span><span class=lnt>29
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Configuration</span>
-</span></span><span class=line><span class=cl><span class=nd>@EnableR2dbcRepositories</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>PostgresConfiguration</span> <span class=kd>extends</span> <span class=n>AbstractR2dbcConfiguration</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${spring.r2dbc.url}&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>url</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${spring.r2dbc.username}&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>username</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${spring.r2dbc.password}&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>password</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Bean</span>
-</span></span><span class=line><span class=cl>    <span class=nd>@Override</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>ConnectionFactory</span> <span class=nf>connectionFactory</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>new</span> <span class=n>PostgresqlConnectionFactory</span><span class=o>(</span>
-</span></span><span class=line><span class=cl>                <span class=n>PostgresqlConnectionConfiguration</span><span class=o>.</span><span class=na>builder</span><span class=o>()</span>
-</span></span><span class=line><span class=cl>                        <span class=o>.</span><span class=na>host</span><span class=o>(</span><span class=n>JdbcParser</span><span class=o>.</span><span class=na>getJdbcHost</span><span class=o>(</span><span class=n>url</span><span class=o>))</span>
-</span></span><span class=line><span class=cl>                        <span class=o>.</span><span class=na>port</span><span class=o>(</span><span class=n>JdbcParser</span><span class=o>.</span><span class=na>getJdbcPort</span><span class=o>(</span><span class=n>url</span><span class=o>))</span>
-</span></span><span class=line><span class=cl>                        <span class=o>.</span><span class=na>username</span><span class=o>(</span><span class=n>username</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>                        <span class=o>.</span><span class=na>password</span><span class=o>(</span><span class=n>password</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>                        <span class=o>.</span><span class=na>database</span><span class=o>(</span><span class=n>JdbcParser</span><span class=o>.</span><span class=na>getDbName</span><span class=o>(</span><span class=n>url</span><span class=o>))</span>
-</span></span><span class=line><span class=cl>                        <span class=o>.</span><span class=na>build</span><span class=o>());</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Bean</span>
-</span></span><span class=line><span class=cl>    <span class=n>ReactiveTransactionManager</span> <span class=nf>transactionManager</span><span class=o>(</span><span class=n>ConnectionFactory</span> <span class=n>connectionFactory</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>new</span> <span class=n>R2dbcTransactionManager</span><span class=o>(</span><span class=n>connectionFactory</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>Our <code>application.properties</code> file needs to have our <strong>DB credentials</strong>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Configuration</span>
+<span class=nd>@EnableR2dbcRepositories</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>PostgresConfiguration</span> <span class=kd>extends</span> <span class=n>AbstractR2dbcConfiguration</span> <span class=o>{</span>
+
+    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${spring.r2dbc.url}&#34;</span><span class=o>)</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>url</span><span class=o>;</span>
+    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${spring.r2dbc.username}&#34;</span><span class=o>)</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>username</span><span class=o>;</span>
+    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${spring.r2dbc.password}&#34;</span><span class=o>)</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>password</span><span class=o>;</span>
+
+    <span class=nd>@Bean</span>
+    <span class=nd>@Override</span>
+    <span class=kd>public</span> <span class=n>ConnectionFactory</span> <span class=nf>connectionFactory</span><span class=o>()</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=k>new</span> <span class=n>PostgresqlConnectionFactory</span><span class=o>(</span>
+                <span class=n>PostgresqlConnectionConfiguration</span><span class=o>.</span><span class=na>builder</span><span class=o>()</span>
+                        <span class=o>.</span><span class=na>host</span><span class=o>(</span><span class=n>JdbcParser</span><span class=o>.</span><span class=na>getJdbcHost</span><span class=o>(</span><span class=n>url</span><span class=o>))</span>
+                        <span class=o>.</span><span class=na>port</span><span class=o>(</span><span class=n>JdbcParser</span><span class=o>.</span><span class=na>getJdbcPort</span><span class=o>(</span><span class=n>url</span><span class=o>))</span>
+                        <span class=o>.</span><span class=na>username</span><span class=o>(</span><span class=n>username</span><span class=o>)</span>
+                        <span class=o>.</span><span class=na>password</span><span class=o>(</span><span class=n>password</span><span class=o>)</span>
+                        <span class=o>.</span><span class=na>database</span><span class=o>(</span><span class=n>JdbcParser</span><span class=o>.</span><span class=na>getDbName</span><span class=o>(</span><span class=n>url</span><span class=o>))</span>
+                        <span class=o>.</span><span class=na>build</span><span class=o>());</span>
+    <span class=o>}</span>
+
+    <span class=nd>@Bean</span>
+    <span class=n>ReactiveTransactionManager</span> <span class=nf>transactionManager</span><span class=o>(</span><span class=n>ConnectionFactory</span> <span class=n>connectionFactory</span><span class=o>)</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=k>new</span> <span class=n>R2dbcTransactionManager</span><span class=o>(</span><span class=n>connectionFactory</span><span class=o>);</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Our <code>application.properties</code> file needs to have our <strong>DB credentials</strong>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>spring.r2dbc.url=jdbc:postgresql://localhost:5432/demo
-</span></span><span class=line><span class=cl>spring.r2dbc.username=developer
-</span></span><span class=line><span class=cl>spring.r2dbc.password=p4SSW0rd
-</span></span></code></pre></td></tr></table></div></div><p>The <code>JdbcParser</code> utility class looks like:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>spring.r2dbc.url=jdbc:postgresql://localhost:5432/demo
+spring.r2dbc.username=developer
+spring.r2dbc.password=p4SSW0rd
+</code></pre></td></tr></table>
+</div>
+</div><p>The <code>JdbcParser</code> utility class looks like:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -285,26 +460,33 @@ Generating the project skull on Spring Initializr</p></div><p>Before digging int
 </span><span class=lnt>17
 </span><span class=lnt>18
 </span><span class=lnt>19
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>JdbcParser</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=n>String</span> <span class=nf>getJdbcHost</span><span class=o>(</span><span class=n>String</span> <span class=n>jdbc</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>getUri</span><span class=o>(</span><span class=n>jdbc</span><span class=o>).</span><span class=na>getHost</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>int</span> <span class=nf>getJdbcPort</span><span class=o>(</span><span class=n>String</span> <span class=n>jdbc</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>getUri</span><span class=o>(</span><span class=n>jdbc</span><span class=o>).</span><span class=na>getPort</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>static</span> <span class=n>String</span> <span class=nf>getDbName</span><span class=o>(</span><span class=n>String</span> <span class=n>jdbc</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>getUri</span><span class=o>(</span><span class=n>jdbc</span><span class=o>).</span><span class=na>getPath</span><span class=o>().</span><span class=na>substring</span><span class=o>(</span><span class=n>1</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=kd>static</span> <span class=n>URI</span> <span class=nf>getUri</span><span class=o>(</span><span class=n>String</span> <span class=n>jdbc</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>String</span> <span class=n>substring</span> <span class=o>=</span> <span class=n>jdbc</span><span class=o>.</span><span class=na>substring</span><span class=o>(</span><span class=n>5</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>URI</span><span class=o>.</span><span class=na>create</span><span class=o>(</span><span class=n>substring</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>I already added <strong>Flyway</strong> to my <strong>Spring Boot dependencies</strong>. I will now configure the <strong>Flyway</strong> execution on startup using a <code>CommandRunner</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=kd>public</span> <span class=kd>class</span> <span class=nc>JdbcParser</span> <span class=o>{</span>
+
+    <span class=kd>public</span> <span class=kd>static</span> <span class=n>String</span> <span class=nf>getJdbcHost</span><span class=o>(</span><span class=n>String</span> <span class=n>jdbc</span><span class=o>)</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=n>getUri</span><span class=o>(</span><span class=n>jdbc</span><span class=o>).</span><span class=na>getHost</span><span class=o>();</span>
+    <span class=o>}</span>
+
+    <span class=kd>public</span> <span class=kd>static</span> <span class=kt>int</span> <span class=nf>getJdbcPort</span><span class=o>(</span><span class=n>String</span> <span class=n>jdbc</span><span class=o>)</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=n>getUri</span><span class=o>(</span><span class=n>jdbc</span><span class=o>).</span><span class=na>getPort</span><span class=o>();</span>
+    <span class=o>}</span>
+
+    <span class=kd>public</span> <span class=kd>static</span> <span class=n>String</span> <span class=nf>getDbName</span><span class=o>(</span><span class=n>String</span> <span class=n>jdbc</span><span class=o>)</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=n>getUri</span><span class=o>(</span><span class=n>jdbc</span><span class=o>).</span><span class=na>getPath</span><span class=o>().</span><span class=na>substring</span><span class=o>(</span><span class=n>1</span><span class=o>);</span>
+    <span class=o>}</span>
+
+    <span class=kd>private</span> <span class=kd>static</span> <span class=n>URI</span> <span class=nf>getUri</span><span class=o>(</span><span class=n>String</span> <span class=n>jdbc</span><span class=o>)</span> <span class=o>{</span>
+        <span class=n>String</span> <span class=n>substring</span> <span class=o>=</span> <span class=n>jdbc</span><span class=o>.</span><span class=na>substring</span><span class=o>(</span><span class=n>5</span><span class=o>);</span>
+        <span class=k>return</span> <span class=n>URI</span><span class=o>.</span><span class=na>create</span><span class=o>(</span><span class=n>substring</span><span class=o>);</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>I already added <strong>Flyway</strong> to my <strong>Spring Boot dependencies</strong>. I will now configure the <strong>Flyway</strong> execution on startup using a <code>CommandRunner</code>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -322,25 +504,33 @@ Generating the project skull on Spring Initializr</p></div><p>Before digging int
 </span><span class=lnt>16
 </span><span class=lnt>17
 </span><span class=lnt>18
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Component</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>FlywayConfiguration</span> <span class=kd>implements</span> <span class=n>CommandLineRunner</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${spring.r2dbc.url}&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>url</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${spring.r2dbc.username}&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>username</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${spring.r2dbc.password}&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>String</span> <span class=n>password</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Override</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>run</span><span class=o>(</span><span class=n>String</span><span class=o>...</span> <span class=n>args</span><span class=o>)</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>Flyway</span><span class=o>.</span><span class=na>configure</span><span class=o>()</span>
-</span></span><span class=line><span class=cl>                <span class=o>.</span><span class=na>dataSource</span><span class=o>(</span><span class=n>url</span><span class=o>,</span> <span class=n>username</span><span class=o>,</span> <span class=n>password</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>                <span class=o>.</span><span class=na>load</span><span class=o>()</span>
-</span></span><span class=line><span class=cl>                <span class=o>.</span><span class=na>migrate</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>I just did this to avoid retyping <strong>PostgreSQL</strong> credentials under the <code>spring.r2dbc.*</code> and <code>flyway.*</code></p><p>Good ! Now we need to have the <code>V1_0__init.sql</code> script in the <code>src/main/resources/db/migration</code> folder, where <strong>Flyway</strong> is seeking SQL scripts. This initialization script will create the tables and insert some sample data:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Component</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>FlywayConfiguration</span> <span class=kd>implements</span> <span class=n>CommandLineRunner</span> <span class=o>{</span>
+
+    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${spring.r2dbc.url}&#34;</span><span class=o>)</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>url</span><span class=o>;</span>
+    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${spring.r2dbc.username}&#34;</span><span class=o>)</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>username</span><span class=o>;</span>
+    <span class=nd>@Value</span><span class=o>(</span><span class=s>&#34;${spring.r2dbc.password}&#34;</span><span class=o>)</span>
+    <span class=kd>private</span> <span class=n>String</span> <span class=n>password</span><span class=o>;</span>
+
+    <span class=nd>@Override</span>
+    <span class=kd>public</span> <span class=kt>void</span> <span class=nf>run</span><span class=o>(</span><span class=n>String</span><span class=o>...</span> <span class=n>args</span><span class=o>)</span> <span class=o>{</span>
+        <span class=n>Flyway</span><span class=o>.</span><span class=na>configure</span><span class=o>()</span>
+                <span class=o>.</span><span class=na>dataSource</span><span class=o>(</span><span class=n>url</span><span class=o>,</span> <span class=n>username</span><span class=o>,</span> <span class=n>password</span><span class=o>)</span>
+                <span class=o>.</span><span class=na>load</span><span class=o>()</span>
+                <span class=o>.</span><span class=na>migrate</span><span class=o>();</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>I just did this to avoid retyping <strong>PostgreSQL</strong> credentials under the <code>spring.r2dbc.*</code> and <code>flyway.*</code></p>
+<p>Good ! Now we need to have the <code>V1_0__init.sql</code> script in the <code>src/main/resources/db/migration</code> folder, where <strong>Flyway</strong> is seeking SQL scripts. This initialization script will create the tables and insert some sample data:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -352,19 +542,26 @@ Generating the project skull on Spring Initializr</p></div><p>Before digging int
 </span><span class=lnt>10
 </span><span class=lnt>11
 </span><span class=lnt>12
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=line><span class=cl><span class=k>CREATE</span><span class=w> </span><span class=k>TABLE</span><span class=w> </span><span class=n>book</span><span class=p>(</span><span class=w>
-</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>id</span><span class=w> </span><span class=nb>SERIAL</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=w> </span><span class=k>PRIMARY</span><span class=w> </span><span class=k>KEY</span><span class=p>,</span><span class=w>
-</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>title</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>100</span><span class=p>),</span><span class=w>
-</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>isbn</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>20</span><span class=p>),</span><span class=w>
-</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>author</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>100</span><span class=p>),</span><span class=w>
-</span></span></span><span class=line><span class=cl><span class=w>   </span><span class=n>price</span><span class=w> </span><span class=nb>NUMERIC</span><span class=p>(</span><span class=mi>6</span><span class=p>,</span><span class=w> </span><span class=mi>2</span><span class=p>)</span><span class=w>
-</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>);</span><span class=w>
-</span></span></span><span class=line><span class=cl><span class=w>
-</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>INSERT</span><span class=w> </span><span class=k>INTO</span><span class=w> </span><span class=n>book</span><span class=w> </span><span class=p>(</span><span class=n>title</span><span class=p>,</span><span class=w> </span><span class=n>isbn</span><span class=p>,</span><span class=w> </span><span class=n>author</span><span class=p>,</span><span class=w> </span><span class=n>price</span><span class=p>)</span><span class=w>
-</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>values</span><span class=w> </span><span class=p>(</span><span class=s1>&#39;Pairing Apache Shiro and Java EE 7&#39;</span><span class=p>,</span><span class=w> </span><span class=s1>&#39;9781365124044&#39;</span><span class=p>,</span><span class=w> </span><span class=s1>&#39;Nebrass Lamouchi&#39;</span><span class=p>,</span><span class=w> </span><span class=mi>0</span><span class=p>);</span><span class=w>
-</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>INSERT</span><span class=w> </span><span class=k>INTO</span><span class=w> </span><span class=n>book</span><span class=w> </span><span class=p>(</span><span class=n>title</span><span class=p>,</span><span class=w> </span><span class=n>isbn</span><span class=p>,</span><span class=w> </span><span class=n>author</span><span class=p>,</span><span class=w> </span><span class=n>price</span><span class=p>)</span><span class=w>
-</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=k>values</span><span class=w> </span><span class=p>(</span><span class=s1>&#39;Playing with Java Microservices on Kubernetes and OpenShift&#39;</span><span class=p>,</span><span class=w> </span><span class=s1>&#39;9782956428510&#39;</span><span class=p>,</span><span class=w> </span><span class=s1>&#39;Nebrass Lamouchi&#39;</span><span class=p>,</span><span class=w> </span><span class=mi>9</span><span class=p>.</span><span class=mi>18</span><span class=p>);</span><span class=w>
-</span></span></span></code></pre></td></tr></table></div></div><p>Now, let&rsquo;s run the application and request the <code>findAll()</code> REST API:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-sql data-lang=sql><span class=k>CREATE</span><span class=w> </span><span class=k>TABLE</span><span class=w> </span><span class=n>book</span><span class=p>(</span><span class=w>
+</span><span class=w>   </span><span class=n>id</span><span class=w> </span><span class=nb>SERIAL</span><span class=w> </span><span class=k>NOT</span><span class=w> </span><span class=k>NULL</span><span class=w> </span><span class=k>PRIMARY</span><span class=w> </span><span class=k>KEY</span><span class=p>,</span><span class=w>
+</span><span class=w>   </span><span class=n>title</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>100</span><span class=p>),</span><span class=w>
+</span><span class=w>   </span><span class=n>isbn</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>20</span><span class=p>),</span><span class=w>
+</span><span class=w>   </span><span class=n>author</span><span class=w> </span><span class=nb>VARCHAR</span><span class=w> </span><span class=p>(</span><span class=mi>100</span><span class=p>),</span><span class=w>
+</span><span class=w>   </span><span class=n>price</span><span class=w> </span><span class=nb>NUMERIC</span><span class=p>(</span><span class=mi>6</span><span class=p>,</span><span class=w> </span><span class=mi>2</span><span class=p>)</span><span class=w>
+</span><span class=w></span><span class=p>);</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=k>INSERT</span><span class=w> </span><span class=k>INTO</span><span class=w> </span><span class=n>book</span><span class=w> </span><span class=p>(</span><span class=n>title</span><span class=p>,</span><span class=w> </span><span class=n>isbn</span><span class=p>,</span><span class=w> </span><span class=n>author</span><span class=p>,</span><span class=w> </span><span class=n>price</span><span class=p>)</span><span class=w>
+</span><span class=w>    </span><span class=k>values</span><span class=w> </span><span class=p>(</span><span class=s1>&#39;Pairing Apache Shiro and Java EE 7&#39;</span><span class=p>,</span><span class=w> </span><span class=s1>&#39;9781365124044&#39;</span><span class=p>,</span><span class=w> </span><span class=s1>&#39;Nebrass Lamouchi&#39;</span><span class=p>,</span><span class=w> </span><span class=mi>0</span><span class=p>);</span><span class=w>
+</span><span class=w></span><span class=k>INSERT</span><span class=w> </span><span class=k>INTO</span><span class=w> </span><span class=n>book</span><span class=w> </span><span class=p>(</span><span class=n>title</span><span class=p>,</span><span class=w> </span><span class=n>isbn</span><span class=p>,</span><span class=w> </span><span class=n>author</span><span class=p>,</span><span class=w> </span><span class=n>price</span><span class=p>)</span><span class=w>
+</span><span class=w>    </span><span class=k>values</span><span class=w> </span><span class=p>(</span><span class=s1>&#39;Playing with Java Microservices on Kubernetes and OpenShift&#39;</span><span class=p>,</span><span class=w> </span><span class=s1>&#39;9782956428510&#39;</span><span class=p>,</span><span class=w> </span><span class=s1>&#39;Nebrass Lamouchi&#39;</span><span class=p>,</span><span class=w> </span><span class=mi>9</span><span class=p>.</span><span class=mi>18</span><span class=p>);</span><span class=w>
+</span></code></pre></td></tr></table>
+</div>
+</div><p>Now, let&rsquo;s run the application and request the <code>findAll()</code> REST API:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -373,16 +570,23 @@ Generating the project skull on Spring Initializr</p></div><p>Before digging int
 </span><span class=lnt>7
 </span><span class=lnt>8
 </span><span class=lnt>9
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-http data-lang=http><span class=line><span class=cl><span class=err>http http://localhost:8080/books
-</span></span></span><span class=line><span class=cl><span class=err>
-</span></span></span><span class=line><span class=cl><span class=err></span><span class=kr>HTTP</span><span class=o>/</span><span class=m>1.1</span> <span class=m>200</span> <span class=ne>OK</span>
-</span></span><span class=line><span class=cl><span class=n>Content-Type</span><span class=o>:</span> <span class=l>text/event-stream;charset=UTF-8</span>
-</span></span><span class=line><span class=cl><span class=n>transfer-encoding</span><span class=o>:</span> <span class=l>chunked</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>data:{&#34;id&#34;:1,&#34;title&#34;:&#34;Pairing Apache Shiro and Java EE 7&#34;,&#34;isbn&#34;:&#34;9781365124044&#34;,&#34;author&#34;:&#34;Nebrass Lamouchi&#34;,&#34;price&#34;:0.00}
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>data:{&#34;id&#34;:2,&#34;title&#34;:&#34;Playing with Java Microservices on Kubernetes and OpenShift&#34;,&#34;isbn&#34;:&#34;9782956428510&#34;,&#34;author&#34;:&#34;Nebrass Lamouchi&#34;,&#34;price&#34;:9.18}
-</span></span></code></pre></td></tr></table></div></div><p>Now, we will add the <strong>Swagger</strong> support to our application. First of all we need to add the <code>SpringFox Swagger 3.0-Snapshot</code> dependencies, as the final version is not yet released:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-http data-lang=http><span class=err>http http://localhost:8080/books
+</span><span class=err>
+</span><span class=err></span><span class=kr>HTTP</span><span class=o>/</span><span class=m>1.1</span> <span class=m>200</span> <span class=ne>OK</span>
+<span class=n>Content-Type</span><span class=o>:</span> <span class=l>text/event-stream;charset=UTF-8</span>
+<span class=n>transfer-encoding</span><span class=o>:</span> <span class=l>chunked</span>
+
+data:{&#34;id&#34;:1,&#34;title&#34;:&#34;Pairing Apache Shiro and Java EE 7&#34;,&#34;isbn&#34;:&#34;9781365124044&#34;,&#34;author&#34;:&#34;Nebrass Lamouchi&#34;,&#34;price&#34;:0.00}
+
+data:{&#34;id&#34;:2,&#34;title&#34;:&#34;Playing with Java Microservices on Kubernetes and OpenShift&#34;,&#34;isbn&#34;:&#34;9782956428510&#34;,&#34;author&#34;:&#34;Nebrass Lamouchi&#34;,&#34;price&#34;:9.18}
+</code></pre></td></tr></table>
+</div>
+</div><p>Now, we will add the <strong>Swagger</strong> support to our application. First of all we need to add the <code>SpringFox Swagger 3.0-Snapshot</code> dependencies, as the final version is not yet released:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -397,36 +601,50 @@ Generating the project skull on Spring Initializr</p></div><p>Before digging int
 </span><span class=lnt>13
 </span><span class=lnt>14
 </span><span class=lnt>15
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;dependency&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;groupId&gt;</span>io.springfox<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>springfox-swagger2<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;version&gt;</span>3.0.0-SNAPSHOT<span class=nt>&lt;/version&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/dependency&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;dependency&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;groupId&gt;</span>io.springfox<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>springfox-spring-webflux<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;version&gt;</span>3.0.0-SNAPSHOT<span class=nt>&lt;/version&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/dependency&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;dependency&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;groupId&gt;</span>io.springfox<span class=nt>&lt;/groupId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;artifactId&gt;</span>springfox-swagger-ui<span class=nt>&lt;/artifactId&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;version&gt;</span>3.0.0-SNAPSHOT<span class=nt>&lt;/version&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/dependency&gt;</span>
-</span></span></code></pre></td></tr></table></div></div><p>These dependencies are not available on the <strong>Maven Central repository</strong>, but in <strong>JFrog OSS Snapshot repository</strong>. We need just to add it to you <code>pom.xml</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;dependency&gt;</span>
+    <span class=nt>&lt;groupId&gt;</span>io.springfox<span class=nt>&lt;/groupId&gt;</span>
+    <span class=nt>&lt;artifactId&gt;</span>springfox-swagger2<span class=nt>&lt;/artifactId&gt;</span>
+    <span class=nt>&lt;version&gt;</span>3.0.0-SNAPSHOT<span class=nt>&lt;/version&gt;</span>
+<span class=nt>&lt;/dependency&gt;</span>
+<span class=nt>&lt;dependency&gt;</span>
+    <span class=nt>&lt;groupId&gt;</span>io.springfox<span class=nt>&lt;/groupId&gt;</span>
+    <span class=nt>&lt;artifactId&gt;</span>springfox-spring-webflux<span class=nt>&lt;/artifactId&gt;</span>
+    <span class=nt>&lt;version&gt;</span>3.0.0-SNAPSHOT<span class=nt>&lt;/version&gt;</span>
+<span class=nt>&lt;/dependency&gt;</span>
+<span class=nt>&lt;dependency&gt;</span>
+    <span class=nt>&lt;groupId&gt;</span>io.springfox<span class=nt>&lt;/groupId&gt;</span>
+    <span class=nt>&lt;artifactId&gt;</span>springfox-swagger-ui<span class=nt>&lt;/artifactId&gt;</span>
+    <span class=nt>&lt;version&gt;</span>3.0.0-SNAPSHOT<span class=nt>&lt;/version&gt;</span>
+<span class=nt>&lt;/dependency&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>These dependencies are not available on the <strong>Maven Central repository</strong>, but in <strong>JFrog OSS Snapshot repository</strong>. We need just to add it to you <code>pom.xml</code>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;repositories&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;repository&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;id&gt;</span>jcenter-snapshots<span class=nt>&lt;/id&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;name&gt;</span>jcenter<span class=nt>&lt;/name&gt;</span>
-</span></span><span class=line><span class=cl>        <span class=nt>&lt;url&gt;</span>http://oss.jfrog.org/artifactory/oss-snapshot-local/<span class=nt>&lt;/url&gt;</span>
-</span></span><span class=line><span class=cl>    <span class=nt>&lt;/repository&gt;</span>
-</span></span><span class=line><span class=cl><span class=nt>&lt;/repositories&gt;</span>
-</span></span></code></pre></td></tr></table></div></div><p>Now, we need to configure <strong>Swagger</strong> in our application:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;repositories&gt;</span>
+    <span class=nt>&lt;repository&gt;</span>
+        <span class=nt>&lt;id&gt;</span>jcenter-snapshots<span class=nt>&lt;/id&gt;</span>
+        <span class=nt>&lt;name&gt;</span>jcenter<span class=nt>&lt;/name&gt;</span>
+        <span class=nt>&lt;url&gt;</span>http://oss.jfrog.org/artifactory/oss-snapshot-local/<span class=nt>&lt;/url&gt;</span>
+    <span class=nt>&lt;/repository&gt;</span>
+<span class=nt>&lt;/repositories&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Now, we need to configure <strong>Swagger</strong> in our application:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -455,37 +673,83 @@ Generating the project skull on Spring Initializr</p></div><p>Before digging int
 </span><span class=lnt>27
 </span><span class=lnt>28
 </span><span class=lnt>29
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=nd>@Configuration</span>
-</span></span><span class=line><span class=cl><span class=nd>@EnableSwagger2WebFlux</span>
-</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=kd>class</span> <span class=nc>SwaggerConfiguration</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Bean</span>
-</span></span><span class=line><span class=cl>    <span class=n>RouterFunction</span><span class=o>&lt;</span><span class=n>ServerResponse</span><span class=o>&gt;</span> <span class=nf>swaggerRouterFunction</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=n>Mono</span><span class=o>&lt;</span><span class=n>ServerResponse</span><span class=o>&gt;</span> <span class=n>build</span> <span class=o>=</span> <span class=n>ServerResponse</span><span class=o>.</span><span class=na>temporaryRedirect</span><span class=o>(</span><span class=n>URI</span><span class=o>.</span><span class=na>create</span><span class=o>(</span><span class=s>&#34;swagger-ui.html&#34;</span><span class=o>)).</span><span class=na>build</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>RouterFunctions</span><span class=o>.</span><span class=na>route</span><span class=o>(</span><span class=n>RequestPredicates</span><span class=o>.</span><span class=na>GET</span><span class=o>(</span><span class=s>&#34;/swagger&#34;</span><span class=o>),</span> <span class=n>request</span> <span class=o>-&gt;</span> <span class=n>build</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=nd>@Bean</span>
-</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=n>Docket</span> <span class=nf>api</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>new</span> <span class=n>Docket</span><span class=o>(</span><span class=n>DocumentationType</span><span class=o>.</span><span class=na>SWAGGER_2</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>                <span class=o>.</span><span class=na>apiInfo</span><span class=o>(</span><span class=n>apiInfo</span><span class=o>())</span>
-</span></span><span class=line><span class=cl>                <span class=o>.</span><span class=na>select</span><span class=o>()</span>
-</span></span><span class=line><span class=cl>                <span class=o>.</span><span class=na>apis</span><span class=o>(</span><span class=n>RequestHandlerSelectors</span><span class=o>.</span><span class=na>any</span><span class=o>())</span>
-</span></span><span class=line><span class=cl>                <span class=o>.</span><span class=na>paths</span><span class=o>(</span><span class=n>PathSelectors</span><span class=o>.</span><span class=na>any</span><span class=o>())</span>
-</span></span><span class=line><span class=cl>                <span class=o>.</span><span class=na>build</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>    <span class=kd>private</span> <span class=n>ApiInfo</span> <span class=nf>apiInfo</span><span class=o>()</span> <span class=o>{</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>new</span> <span class=n>ApiInfoBuilder</span><span class=o>()</span>
-</span></span><span class=line><span class=cl>                <span class=o>.</span><span class=na>title</span><span class=o>(</span><span class=s>&#34;Playing with Spring Webflux&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>                <span class=o>.</span><span class=na>description</span><span class=o>(</span><span class=s>&#34;Sample application for my blog post &#39;Playing with Reactive Spring Boot&#39;&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>                <span class=o>.</span><span class=na>contact</span><span class=o>(</span><span class=k>new</span> <span class=n>Contact</span><span class=o>(</span><span class=s>&#34;Nebrass Lamouchi&#34;</span><span class=o>,</span> <span class=s>&#34;https://blog.nebrass.fr&#34;</span><span class=o>,</span> <span class=s>&#34;lnibrass@gmail.com&#34;</span><span class=o>))</span>
-</span></span><span class=line><span class=cl>                <span class=o>.</span><span class=na>version</span><span class=o>(</span><span class=s>&#34;1.0&#34;</span><span class=o>)</span>
-</span></span><span class=line><span class=cl>                <span class=o>.</span><span class=na>build</span><span class=o>();</span>
-</span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></td></tr></table></div></div><p>There is some new stuff here. Keep calm 👻 we will cover everything:</p><ul><li>The <code>@EnableSwagger2Webflux</code> annotation Indicates that <strong>Swagger</strong> support for <strong>Webflux</strong> should be enabled.</li><li>The <code>swaggerRouterFunction()</code> method is used to define a <strong>RouterFunction</strong> for the <strong>Swagger UI</strong> ressources. A <strong>RouterFunction</strong> represents a function that routes an <strong>HTTP request</strong> to a <strong>Handling Function</strong> that will be dealing with that request.</li></ul><p>Good ! Now our application has <strong>Swagger</strong> enabled. Just run the application and visit the <a href=http://localhost:8080/swagger-ui.html>http://localhost:8080/swagger-ui.html</a>:</p><div align=center><p><img loading=lazy src=../images/rx-webflux-swagger-ui-1024x529.webp alt="Swagger UI" title="Swagger UI">
-Swagger UI</p></div><p>Good 😊 We made our first Spring WebFlux application ! You can now dig more into the Reactive Programming style and you can for example try to create some Websockets to stream some of your data reactively from a REST API and a Websocket 🤩</p><p>If you have questions, please feel free to get in touch with me 😎</p></div><footer class=post-footer><ul class=post-tags></ul><div class=share-buttons><a target=_blank rel="noopener noreferrer" aria-label="share Playing with Reactive Spring Boot on twitter" href="https://twitter.com/intent/tweet/?text=Playing%20with%20Reactive%20Spring%20Boot&url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f&hashtags="><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM195.519 424.544c135.939.0 210.268-112.643 210.268-210.268.0-3.218.0-6.437-.153-9.502 14.406-10.421 26.973-23.448 36.935-38.314-13.18 5.824-27.433 9.809-42.452 11.648 15.326-9.196 26.973-23.602 32.49-40.92-14.252 8.429-30.038 14.56-46.896 17.931-13.487-14.406-32.644-23.295-53.946-23.295-40.767.0-73.87 33.104-73.87 73.87.0 5.824.613 11.494 1.992 16.858-61.456-3.065-115.862-32.49-152.337-77.241-6.284 10.881-9.962 23.601-9.962 37.088.0 25.594 13.027 48.276 32.95 61.456-12.107-.307-23.448-3.678-33.41-9.196v.92c0 35.862 25.441 65.594 59.311 72.49-6.13 1.686-12.72 2.606-19.464 2.606-4.751.0-9.348-.46-13.946-1.38 9.349 29.426 36.628 50.728 68.965 51.341-25.287 19.771-57.164 31.571-91.8 31.571-5.977.0-11.801-.306-17.625-1.073 32.337 21.15 71.264 33.41 112.95 33.41z"/></svg></a><a target=_blank rel="noopener noreferrer" aria-label="share Playing with Reactive Spring Boot on linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f&title=Playing%20with%20Reactive%20Spring%20Boot&summary=Playing%20with%20Reactive%20Spring%20Boot&source=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM160.461 423.278V197.561h-75.04v225.717h75.04zm270.539.0V293.839c0-69.333-37.018-101.586-86.381-101.586-39.804.0-57.634 21.891-67.617 37.266v-31.958h-75.021c.995 21.181.0 225.717.0 225.717h75.02V297.222c0-6.748.486-13.492 2.474-18.315 5.414-13.475 17.767-27.434 38.494-27.434 27.135.0 38.007 20.707 38.007 51.037v120.768H431zM123.448 88.722C97.774 88.722 81 105.601 81 127.724c0 21.658 16.264 39.002 41.455 39.002h.484c26.165.0 42.452-17.344 42.452-39.002-.485-22.092-16.241-38.954-41.943-39.002z"/></svg></a><a target=_blank rel="noopener noreferrer" aria-label="share Playing with Reactive Spring Boot on reddit" href="https://reddit.com/submit?url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f&title=Playing%20with%20Reactive%20Spring%20Boot"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM446 265.638c0-22.964-18.616-41.58-41.58-41.58-11.211.0-21.361 4.457-28.841 11.666-28.424-20.508-67.586-33.757-111.204-35.278l18.941-89.121 61.884 13.157c.756 15.734 13.642 28.29 29.56 28.29 16.407.0 29.706-13.299 29.706-29.701.0-16.403-13.299-29.702-29.706-29.702-11.666.0-21.657 6.792-26.515 16.578l-69.105-14.69c-1.922-.418-3.939-.042-5.585 1.036-1.658 1.073-2.811 2.761-3.224 4.686l-21.152 99.438c-44.258 1.228-84.046 14.494-112.837 35.232-7.468-7.164-17.589-11.591-28.757-11.591-22.965.0-41.585 18.616-41.585 41.58.0 16.896 10.095 31.41 24.568 37.918-.639 4.135-.99 8.328-.99 12.576.0 63.977 74.469 115.836 166.33 115.836s166.334-51.859 166.334-115.836c0-4.218-.347-8.387-.977-12.493 14.564-6.47 24.735-21.034 24.735-38.001zM326.526 373.831c-20.27 20.241-59.115 21.816-70.534 21.816-11.428.0-50.277-1.575-70.522-21.82-3.007-3.008-3.007-7.882.0-10.889 3.003-2.999 7.882-3.003 10.885.0 12.777 12.781 40.11 17.317 59.637 17.317 19.522.0 46.86-4.536 59.657-17.321 3.016-2.999 7.886-2.995 10.885.008 3.008 3.011 3.003 7.882-.008 10.889zm-5.23-48.781c-16.373.0-29.701-13.324-29.701-29.698.0-16.381 13.328-29.714 29.701-29.714 16.378.0 29.706 13.333 29.706 29.714.0 16.374-13.328 29.698-29.706 29.698zM160.91 295.348c0-16.381 13.328-29.71 29.714-29.71 16.369.0 29.689 13.329 29.689 29.71.0 16.373-13.32 29.693-29.689 29.693-16.386.0-29.714-13.32-29.714-29.693z"/></svg></a><a target=_blank rel="noopener noreferrer" aria-label="share Playing with Reactive Spring Boot on facebook" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H342.978V319.085h66.6l12.672-82.621h-79.272v-53.617c0-22.603 11.073-44.636 46.58-44.636H425.6v-70.34s-32.71-5.582-63.982-5.582c-65.288.0-107.96 39.569-107.96 111.204v62.971h-72.573v82.621h72.573V512h-191.104c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892z"/></svg></a><a target=_blank rel="noopener noreferrer" aria-label="share Playing with Reactive Spring Boot on whatsapp" href="https://api.whatsapp.com/send?text=Playing%20with%20Reactive%20Spring%20Boot%20-%20https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zm-58.673 127.703c-33.842-33.881-78.847-52.548-126.798-52.568-98.799.0-179.21 80.405-179.249 179.234-.013 31.593 8.241 62.428 23.927 89.612l-25.429 92.884 95.021-24.925c26.181 14.28 55.659 21.807 85.658 21.816h.074c98.789.0 179.206-80.413 179.247-179.243.018-47.895-18.61-92.93-52.451-126.81zM263.976 403.485h-.06c-26.734-.01-52.954-7.193-75.828-20.767l-5.441-3.229-56.386 14.792 15.05-54.977-3.542-5.637c-14.913-23.72-22.791-51.136-22.779-79.287.033-82.142 66.867-148.971 149.046-148.971 39.793.014 77.199 15.531 105.329 43.692 28.128 28.16 43.609 65.592 43.594 105.4-.034 82.149-66.866 148.983-148.983 148.984zm81.721-111.581c-4.479-2.242-26.499-13.075-30.604-14.571-4.105-1.495-7.091-2.241-10.077 2.241-2.986 4.483-11.569 14.572-14.182 17.562-2.612 2.988-5.225 3.364-9.703 1.12-4.479-2.241-18.91-6.97-36.017-22.23C231.8 264.15 222.81 249.484 220.198 245s-.279-6.908 1.963-9.14c2.016-2.007 4.48-5.232 6.719-7.847 2.24-2.615 2.986-4.484 4.479-7.472 1.493-2.99.747-5.604-.374-7.846-1.119-2.241-10.077-24.288-13.809-33.256-3.635-8.733-7.327-7.55-10.077-7.688-2.609-.13-5.598-.158-8.583-.158-2.986.0-7.839 1.121-11.944 5.604-4.105 4.484-15.675 15.32-15.675 37.364.0 22.046 16.048 43.342 18.287 46.332 2.24 2.99 31.582 48.227 76.511 67.627 10.685 4.615 19.028 7.371 25.533 9.434 10.728 3.41 20.492 2.929 28.209 1.775 8.605-1.285 26.499-10.833 30.231-21.295 3.732-10.464 3.732-19.431 2.612-21.298-1.119-1.869-4.105-2.99-8.583-5.232z"/></svg></a><a target=_blank rel="noopener noreferrer" aria-label="share Playing with Reactive Spring Boot on telegram" href="https://telegram.me/share/url?text=Playing%20with%20Reactive%20Spring%20Boot&url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f"><svg viewBox="2 2 28 28"><path d="M26.49 29.86H5.5a3.37 3.37.0 01-2.47-1 3.35 3.35.0 01-1-2.47V5.48A3.36 3.36.0 013 3 3.37 3.37.0 015.5 2h21A3.38 3.38.0 0129 3a3.36 3.36.0 011 2.46V26.37a3.35 3.35.0 01-1 2.47 3.38 3.38.0 01-2.51 1.02zm-5.38-6.71a.79.79.0 00.85-.66L24.73 9.24a.55.55.0 00-.18-.46.62.62.0 00-.41-.17q-.08.0-16.53 6.11a.59.59.0 00-.41.59.57.57.0 00.43.52l4 1.24 1.61 4.83a.62.62.0 00.63.43.56.56.0 00.4-.17L16.54 20l4.09 3A.9.9.0 0021.11 23.15zM13.8 20.71l-1.21-4q8.72-5.55 8.78-5.55c.15.0.23.0.23.16a.18.18.0 010 .06s-2.51 2.3-7.52 6.8z"/></svg></a></div></footer></article></main><footer class=footer><span>&copy; 2022 <a href=https://blog.nebrass.fr>Nebrass Homepage</a></span>
-<span>Powered by
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=nd>@Configuration</span>
+<span class=nd>@EnableSwagger2WebFlux</span>
+<span class=kd>public</span> <span class=kd>class</span> <span class=nc>SwaggerConfiguration</span> <span class=o>{</span>
+
+    <span class=nd>@Bean</span>
+    <span class=n>RouterFunction</span><span class=o>&lt;</span><span class=n>ServerResponse</span><span class=o>&gt;</span> <span class=nf>swaggerRouterFunction</span><span class=o>()</span> <span class=o>{</span>
+        <span class=n>Mono</span><span class=o>&lt;</span><span class=n>ServerResponse</span><span class=o>&gt;</span> <span class=n>build</span> <span class=o>=</span> <span class=n>ServerResponse</span><span class=o>.</span><span class=na>temporaryRedirect</span><span class=o>(</span><span class=n>URI</span><span class=o>.</span><span class=na>create</span><span class=o>(</span><span class=s>&#34;swagger-ui.html&#34;</span><span class=o>)).</span><span class=na>build</span><span class=o>();</span>
+        <span class=k>return</span> <span class=n>RouterFunctions</span><span class=o>.</span><span class=na>route</span><span class=o>(</span><span class=n>RequestPredicates</span><span class=o>.</span><span class=na>GET</span><span class=o>(</span><span class=s>&#34;/swagger&#34;</span><span class=o>),</span> <span class=n>request</span> <span class=o>-&gt;</span> <span class=n>build</span><span class=o>);</span>
+    <span class=o>}</span>
+
+    <span class=nd>@Bean</span>
+    <span class=kd>public</span> <span class=n>Docket</span> <span class=nf>api</span><span class=o>()</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=k>new</span> <span class=n>Docket</span><span class=o>(</span><span class=n>DocumentationType</span><span class=o>.</span><span class=na>SWAGGER_2</span><span class=o>)</span>
+                <span class=o>.</span><span class=na>apiInfo</span><span class=o>(</span><span class=n>apiInfo</span><span class=o>())</span>
+                <span class=o>.</span><span class=na>select</span><span class=o>()</span>
+                <span class=o>.</span><span class=na>apis</span><span class=o>(</span><span class=n>RequestHandlerSelectors</span><span class=o>.</span><span class=na>any</span><span class=o>())</span>
+                <span class=o>.</span><span class=na>paths</span><span class=o>(</span><span class=n>PathSelectors</span><span class=o>.</span><span class=na>any</span><span class=o>())</span>
+                <span class=o>.</span><span class=na>build</span><span class=o>();</span>
+    <span class=o>}</span>
+
+    <span class=kd>private</span> <span class=n>ApiInfo</span> <span class=nf>apiInfo</span><span class=o>()</span> <span class=o>{</span>
+        <span class=k>return</span> <span class=k>new</span> <span class=n>ApiInfoBuilder</span><span class=o>()</span>
+                <span class=o>.</span><span class=na>title</span><span class=o>(</span><span class=s>&#34;Playing with Spring Webflux&#34;</span><span class=o>)</span>
+                <span class=o>.</span><span class=na>description</span><span class=o>(</span><span class=s>&#34;Sample application for my blog post &#39;Playing with Reactive Spring Boot&#39;&#34;</span><span class=o>)</span>
+                <span class=o>.</span><span class=na>contact</span><span class=o>(</span><span class=k>new</span> <span class=n>Contact</span><span class=o>(</span><span class=s>&#34;Nebrass Lamouchi&#34;</span><span class=o>,</span> <span class=s>&#34;https://blog.nebrass.fr&#34;</span><span class=o>,</span> <span class=s>&#34;lnibrass@gmail.com&#34;</span><span class=o>))</span>
+                <span class=o>.</span><span class=na>version</span><span class=o>(</span><span class=s>&#34;1.0&#34;</span><span class=o>)</span>
+                <span class=o>.</span><span class=na>build</span><span class=o>();</span>
+    <span class=o>}</span>
+<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>There is some new stuff here. Keep calm 👻 we will cover everything:</p>
+<ul>
+<li>The <code>@EnableSwagger2Webflux</code> annotation Indicates that <strong>Swagger</strong> support for <strong>Webflux</strong> should be enabled.</li>
+<li>The <code>swaggerRouterFunction()</code> method is used to define a <strong>RouterFunction</strong> for the <strong>Swagger UI</strong> ressources. A <strong>RouterFunction</strong> represents a function that routes an <strong>HTTP request</strong> to a <strong>Handling Function</strong> that will be dealing with that request.</li>
+</ul>
+<p>Good ! Now our application has <strong>Swagger</strong> enabled. Just run the application and visit the <a href=http://localhost:8080/swagger-ui.html>http://localhost:8080/swagger-ui.html</a>:</p>
+<div align=center>
+<p><img loading=lazy src=../images/rx-webflux-swagger-ui-1024x529.webp alt="Swagger UI" title="Swagger UI">
+Swagger UI</p>
+</div>
+<p>Good 😊 We made our first Spring WebFlux application ! You can now dig more into the Reactive Programming style and you can for example try to create some Websockets to stream some of your data reactively from a REST API and a Websocket 🤩</p>
+<p>If you have questions, please feel free to get in touch with me 😎</p>
+</div>
+<footer class=post-footer>
+<ul class=post-tags>
+</ul>
+<div class=share-buttons>
+<a target=_blank rel="noopener noreferrer" aria-label="share Playing with Reactive Spring Boot on twitter" href="https://twitter.com/intent/tweet/?text=Playing%20with%20Reactive%20Spring%20Boot&url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f&hashtags="><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM195.519 424.544c135.939.0 210.268-112.643 210.268-210.268.0-3.218.0-6.437-.153-9.502 14.406-10.421 26.973-23.448 36.935-38.314-13.18 5.824-27.433 9.809-42.452 11.648 15.326-9.196 26.973-23.602 32.49-40.92-14.252 8.429-30.038 14.56-46.896 17.931-13.487-14.406-32.644-23.295-53.946-23.295-40.767.0-73.87 33.104-73.87 73.87.0 5.824.613 11.494 1.992 16.858-61.456-3.065-115.862-32.49-152.337-77.241-6.284 10.881-9.962 23.601-9.962 37.088.0 25.594 13.027 48.276 32.95 61.456-12.107-.307-23.448-3.678-33.41-9.196v.92c0 35.862 25.441 65.594 59.311 72.49-6.13 1.686-12.72 2.606-19.464 2.606-4.751.0-9.348-.46-13.946-1.38 9.349 29.426 36.628 50.728 68.965 51.341-25.287 19.771-57.164 31.571-91.8 31.571-5.977.0-11.801-.306-17.625-1.073 32.337 21.15 71.264 33.41 112.95 33.41z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Playing with Reactive Spring Boot on linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f&title=Playing%20with%20Reactive%20Spring%20Boot&summary=Playing%20with%20Reactive%20Spring%20Boot&source=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM160.461 423.278V197.561h-75.04v225.717h75.04zm270.539.0V293.839c0-69.333-37.018-101.586-86.381-101.586-39.804.0-57.634 21.891-67.617 37.266v-31.958h-75.021c.995 21.181.0 225.717.0 225.717h75.02V297.222c0-6.748.486-13.492 2.474-18.315 5.414-13.475 17.767-27.434 38.494-27.434 27.135.0 38.007 20.707 38.007 51.037v120.768H431zM123.448 88.722C97.774 88.722 81 105.601 81 127.724c0 21.658 16.264 39.002 41.455 39.002h.484c26.165.0 42.452-17.344 42.452-39.002-.485-22.092-16.241-38.954-41.943-39.002z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Playing with Reactive Spring Boot on reddit" href="https://reddit.com/submit?url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f&title=Playing%20with%20Reactive%20Spring%20Boot"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM446 265.638c0-22.964-18.616-41.58-41.58-41.58-11.211.0-21.361 4.457-28.841 11.666-28.424-20.508-67.586-33.757-111.204-35.278l18.941-89.121 61.884 13.157c.756 15.734 13.642 28.29 29.56 28.29 16.407.0 29.706-13.299 29.706-29.701.0-16.403-13.299-29.702-29.706-29.702-11.666.0-21.657 6.792-26.515 16.578l-69.105-14.69c-1.922-.418-3.939-.042-5.585 1.036-1.658 1.073-2.811 2.761-3.224 4.686l-21.152 99.438c-44.258 1.228-84.046 14.494-112.837 35.232-7.468-7.164-17.589-11.591-28.757-11.591-22.965.0-41.585 18.616-41.585 41.58.0 16.896 10.095 31.41 24.568 37.918-.639 4.135-.99 8.328-.99 12.576.0 63.977 74.469 115.836 166.33 115.836s166.334-51.859 166.334-115.836c0-4.218-.347-8.387-.977-12.493 14.564-6.47 24.735-21.034 24.735-38.001zM326.526 373.831c-20.27 20.241-59.115 21.816-70.534 21.816-11.428.0-50.277-1.575-70.522-21.82-3.007-3.008-3.007-7.882.0-10.889 3.003-2.999 7.882-3.003 10.885.0 12.777 12.781 40.11 17.317 59.637 17.317 19.522.0 46.86-4.536 59.657-17.321 3.016-2.999 7.886-2.995 10.885.008 3.008 3.011 3.003 7.882-.008 10.889zm-5.23-48.781c-16.373.0-29.701-13.324-29.701-29.698.0-16.381 13.328-29.714 29.701-29.714 16.378.0 29.706 13.333 29.706 29.714.0 16.374-13.328 29.698-29.706 29.698zM160.91 295.348c0-16.381 13.328-29.71 29.714-29.71 16.369.0 29.689 13.329 29.689 29.71.0 16.373-13.32 29.693-29.689 29.693-16.386.0-29.714-13.32-29.714-29.693z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Playing with Reactive Spring Boot on facebook" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H342.978V319.085h66.6l12.672-82.621h-79.272v-53.617c0-22.603 11.073-44.636 46.58-44.636H425.6v-70.34s-32.71-5.582-63.982-5.582c-65.288.0-107.96 39.569-107.96 111.204v62.971h-72.573v82.621h72.573V512h-191.104c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Playing with Reactive Spring Boot on whatsapp" href="https://api.whatsapp.com/send?text=Playing%20with%20Reactive%20Spring%20Boot%20-%20https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zm-58.673 127.703c-33.842-33.881-78.847-52.548-126.798-52.568-98.799.0-179.21 80.405-179.249 179.234-.013 31.593 8.241 62.428 23.927 89.612l-25.429 92.884 95.021-24.925c26.181 14.28 55.659 21.807 85.658 21.816h.074c98.789.0 179.206-80.413 179.247-179.243.018-47.895-18.61-92.93-52.451-126.81zM263.976 403.485h-.06c-26.734-.01-52.954-7.193-75.828-20.767l-5.441-3.229-56.386 14.792 15.05-54.977-3.542-5.637c-14.913-23.72-22.791-51.136-22.779-79.287.033-82.142 66.867-148.971 149.046-148.971 39.793.014 77.199 15.531 105.329 43.692 28.128 28.16 43.609 65.592 43.594 105.4-.034 82.149-66.866 148.983-148.983 148.984zm81.721-111.581c-4.479-2.242-26.499-13.075-30.604-14.571-4.105-1.495-7.091-2.241-10.077 2.241-2.986 4.483-11.569 14.572-14.182 17.562-2.612 2.988-5.225 3.364-9.703 1.12-4.479-2.241-18.91-6.97-36.017-22.23C231.8 264.15 222.81 249.484 220.198 245s-.279-6.908 1.963-9.14c2.016-2.007 4.48-5.232 6.719-7.847 2.24-2.615 2.986-4.484 4.479-7.472 1.493-2.99.747-5.604-.374-7.846-1.119-2.241-10.077-24.288-13.809-33.256-3.635-8.733-7.327-7.55-10.077-7.688-2.609-.13-5.598-.158-8.583-.158-2.986.0-7.839 1.121-11.944 5.604-4.105 4.484-15.675 15.32-15.675 37.364.0 22.046 16.048 43.342 18.287 46.332 2.24 2.99 31.582 48.227 76.511 67.627 10.685 4.615 19.028 7.371 25.533 9.434 10.728 3.41 20.492 2.929 28.209 1.775 8.605-1.285 26.499-10.833 30.231-21.295 3.732-10.464 3.732-19.431 2.612-21.298-1.119-1.869-4.105-2.99-8.583-5.232z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share Playing with Reactive Spring Boot on telegram" href="https://telegram.me/share/url?text=Playing%20with%20Reactive%20Spring%20Boot&url=https%3a%2f%2fblog.nebrass.fr%2fplaying-with-reactive-spring-boot%2f"><svg viewBox="2 2 28 28"><path d="M26.49 29.86H5.5a3.37 3.37.0 01-2.47-1 3.35 3.35.0 01-1-2.47V5.48A3.36 3.36.0 013 3 3.37 3.37.0 015.5 2h21A3.38 3.38.0 0129 3a3.36 3.36.0 011 2.46V26.37a3.35 3.35.0 01-1 2.47 3.38 3.38.0 01-2.51 1.02zm-5.38-6.71a.79.79.0 00.85-.66L24.73 9.24a.55.55.0 00-.18-.46.62.62.0 00-.41-.17q-.08.0-16.53 6.11a.59.59.0 00-.41.59.57.57.0 00.43.52l4 1.24 1.61 4.83a.62.62.0 00.63.43.56.56.0 00.4-.17L16.54 20l4.09 3A.9.9.0 0021.11 23.15zM13.8 20.71l-1.21-4q8.72-5.55 8.78-5.55c.15.0.23.0.23.16a.18.18.0 010 .06s-2.51 2.3-7.52 6.8z"/></svg>
+</a>
+</div>
+</footer>
+</article>
+</main>
+<footer class=footer>
+<span>&copy; 2022 <a href=https://blog.nebrass.fr>Nebrass Homepage</a></span>
+<span>
+Powered by
 <a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
-        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg></a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(t){t.preventDefault();var e=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(e)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(e)}']`).scrollIntoView({behavior:"smooth"}),e==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${e}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script></body></html>
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+</body>
+</html>
